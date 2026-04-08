@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OurWorlds Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    font-family: 'Quicksand', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #ffffff, #ff4da6);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===== STARS ===== */
+  .stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stars span {
+    position: absolute;
+    color: white;
+    font-size: 18px;
+    opacity: 0.8;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-50px); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(110vh); opacity: 0.8; }
+  }
+
+  /* ===== LOGIN BOX ===== */
+  .login-box {
+    position: relative;
+    background: #ff2e93;
+    border: 3px solid white;
+    border-radius: 20px;
+    padding: 40px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255,255,255,0.3);
+    z-index: 2;
+    color: white;
+  }
+
+  .logo {
+    width: 300px;
+    margin-bottom: 20px;
+  }
+
+  input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 2px solid white;
+    outline: none;
+    font-family: 'Quicksand', sans-serif;
+  }
+
+  input:focus {
+    box-shadow: 0 0 8px white;
+  }
+
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(to bottom, #ffffff, #ffe6f2);
+    border: 2px solid white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    color: #ff2e93;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    transform: scale(1.05);
+  }
+
+  .links {
+    margin-top: 15px;
+    font-size: 12px;
+  }
+
+  .links a {
+    color: white;
+    text-decoration: underline;
+  }
+
+  /* ===== GURT ===== */
+  #gurt {
+    position: absolute;
+    width: 70px;
+    opacity: 0.4;
+    z-index: 1;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- STARS -->
+<div class="stars">
+  <span style="left:5%; animation-duration:6s;">☆</span>
+  <span style="left:15%; animation-duration:8s;">★</span>
+  <span style="left:25%; animation-duration:7s;">☆</span>
+  <span style="left:35%; animation-duration:5s;">★</span>
+  <span style="left:45%; animation-duration:9s;">☆</span>
+  <span style="left:55%; animation-duration:6s;">★</span>
+  <span style="left:65%; animation-duration:7s;">☆</span>
+  <span style="left:75%; animation-duration:8s;">★</span>
+  <span style="left:85%; animation-duration:6s;">☆</span>
+  <span style="left:95%; animation-duration:7s;">★</span>
+</div>
+
+<!-- LOGIN BOX -->
+<div class="login-box">
+  <img src="logo.PNG" class="logo" alt="OurWorlds Logo">
+
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+
+  <div class="links">
+    <div>Don't have an account? <a href="OurWorlds_registration.html">Create one here</a></div>
+    <div><a href="#">Forgot password?</a></div>
+  </div>
+</div>
+
+<!-- GURT -->
+<img src="gurt.png" id="gurt" alt="Gurt">
+
+<script>
+  /* ===== LOGIN FUNCTION ===== */
+  function login() {
+    const user = document.getElementById('username').value;
+    const pass = document.getElementById('password').value;
+
+    if (user === "ilikespongebob" && pass === "spongebob") {
+      window.location.href = "OurWorlds_homepage.html";
+    } else {
+      alert("Wrong username or password 😭");
+    }
+  }
+
+  /* ===== GURT MOVEMENT ===== */
+  const gurt = document.getElementById('gurt');
+
+  let x = Math.random() * window.innerWidth;
+  let y = Math.random() * window.innerHeight;
+
+  let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+  let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+
+  let angle = 0;
+  let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+
+  function moveGurt() {
+    x += dx;
+    y += dy;
+    angle += dAngle;
+
+    if (x < -70 || x > window.innerWidth) dx = -dx;
+    if (y < -70 || y > window.innerHeight) dy = -dy;
+
+    gurt.style.left = x + 'px';
+    gurt.style.top = y + 'px';
+    gurt.style.transform = `rotate(${angle}deg)`;
+
+    requestAnimationFrame(moveGurt);
+  }
+
+  moveGurt();
+</script>
+
+</body>
+</html>
+
+  <!-- Gurt -->
+  <img src="gurt.png" id="gurt" alt="Gurt">
+
+  <script>
+    const gurt = document.getElementById('gurt');
+    let x = Math.random() * window.innerWidth;
+    let y = Math.random() * window.innerHeight;
+    let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+    let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+    let angle = 0;
+    let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+
+    function moveGurt() {
+      x += dx;
+      y += dy;
+      angle += dAngle;
+
+      // Bounce off edges (allow going slightly offscreen)
+      if (x < -70 || x > window.innerWidth) dx = -dx;
+      if (y < -70 || y > window.innerHeight) dy = -dy;
+
+      gurt.style.left = x + 'px';
+      gurt.style.top = y + 'px';
+      gurt.style.transform = `rotate(${angle}deg)`;
+
+      requestAnimationFrame(moveGurt);
+    }
+
+    moveGurt();
+  </script>
+
+</body>
+</html>
