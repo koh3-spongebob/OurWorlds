@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OurWorlds Register</title>
+
+  <!-- Cute font -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+
+	.art-img {
+  	animation: floatUpDown 3s ease-in-out infinite;
+	}
+
+
+    /* ===== PAGE LAYOUT ===== */
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      background: linear-gradient(to bottom, #ffffff, #ff4da6);
+      overflow: hidden;
+    }
+
+    /* ===== FALLING STARS ===== */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .stars span {
+      position: absolute;
+      color: white;
+      font-size: 18px;
+      opacity: 0.8;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-50px); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0.8; }
+    }
+
+    /* ===== CONTAINER ===== */
+    .container {
+      display: flex;
+      width: 100%;
+      z-index: 1;
+      align-items: center; /* FIX: prevents stretching */
+    }
+
+
+@keyframes floatUpDown {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+
+    /* ===== REGISTRATION BOX ===== */
+    .register-box {
+      margin-left: 80px;
+      align-self: center; /* FIX: stops stretch */
+      flex-shrink: 0;     /* FIX: keeps size stable */
+
+      position: relative;
+      background: #ff2e93;
+      border: 3px solid white;
+      border-radius: 20px;
+
+      padding: 30px; /* slightly tighter */
+      width: 320px;
+
+      text-align: center;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255,255,255,0.3);
+      color: white;
+      overflow: hidden;
+    }
+
+    /* ===== STARS INSIDE BOX ===== */
+    .box-stars span {
+      position: absolute;
+      color: #d40070;
+      font-size: 50px;
+      opacity: 0;
+      animation: fallBox linear infinite;
+    }
+
+    @keyframes fallBox {
+      0% { transform: translateY(-60px); opacity: 0; }
+      20% { opacity: 0.7; }
+      100% { transform: translateY(500px); opacity: 0.7; }
+    }
+
+    /* ===== IMAGE ===== */
+    .logo {
+      width: 150%;
+      max-width: 330px;
+      margin: 0 auto 10px;
+      display: block;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== TAGLINE ===== */
+    .tagline {
+      font-size: 14px;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== INPUTS ===== */
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+
+      border-radius: 10px;
+      border: 2px solid white;
+      outline: none;
+
+      font-family: 'Quicksand', sans-serif;
+      position: relative;
+      z-index: 2;
+    }
+
+    input:focus {
+      box-shadow: 0 0 8px white;
+    }
+
+    /* ===== BUTTON ===== */
+    button {
+      margin-top: 12px;
+      padding: 10px 20px;
+
+      border: none;
+      border-radius: 15px;
+
+      background: linear-gradient(to bottom, #ffffff, #ffe6f2);
+      border: 2px solid white;
+
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      color: #ff2e93;
+
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      position: relative;
+      z-index: 2;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to bottom, #ffe6f2, #ffffff);
+    }
+
+    /* ===== LINKS ===== */
+    .links {
+      margin-top: 12px;
+      font-size: 12px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .links a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .links a:hover {
+      color: #ffe6f2;
+    }
+
+    /* ===== RIGHT ART ===== */
+    .art {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .art img {
+      max-width: 60%;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACKGROUND STARS -->
+  <div class="stars">
+    <span style="left:5%; animation-duration:6s;">☆</span>
+    <span style="left:15%; animation-duration:8s;">★</span>
+    <span style="left:25%; animation-duration:7s;">☆</span>
+    <span style="left:35%; animation-duration:5s;">★</span>
+    <span style="left:45%; animation-duration:9s;">☆</span>
+    <span style="left:55%; animation-duration:6s;">★</span>
+    <span style="left:65%; animation-duration:7s;">☆</span>
+    <span style="left:75%; animation-duration:8s;">★</span>
+    <span style="left:85%; animation-duration:6s;">☆</span>
+    <span style="left:95%; animation-duration:7s;">★</span>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+
+    <!-- REGISTER BOX -->
+    <div class="register-box">
+
+      <!-- BOX STARS -->
+      <div class="box-stars">
+        <span style="left:5%; animation-duration:15s;">★</span>
+        <span style="left:25%; animation-duration:18s;">☆</span>
+        <span style="left:45%; animation-duration:16s;">★</span>
+        <span style="left:65%; animation-duration:20s;">☆</span>
+        <span style="left:85%; animation-duration:17s;">★</span>
+      </div>
+
+      <img src="explore.PNG" class="logo" alt="Explore">
+
+      <div class="tagline">Create a free account below:</div>
+
+      <input type="text" placeholder="Username">
+      <input type="email" placeholder="Email">
+      <input type="password" placeholder="Password">
+      <input type="password" placeholder="Confirm Password">
+
+      <button>Create Account</button>
+
+      <div class="links">
+        Already have an account?
+        <a href="OurWorlds_login.html">Login here</a>
+      </div>
+
+    </div>
+
+    <!-- RIGHT ART -->
+    <div class="art">
+      <img src="ninaandgurt.png" class="art-img" alt="Cute Art">
+    </div>
+
+  </div>
+
+</body>
+</html>
