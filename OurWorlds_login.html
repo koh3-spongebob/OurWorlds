@@ -150,33 +150,35 @@ async function login() {
 }
 
 /* ================= GURT ANIMATION ================= */
-const gurt = document.getElementById("gurt");
+(() => {
+  const gurt = document.getElementById("gurt");
 
-let x = Math.random() * window.innerWidth;
-let y = Math.random() * window.innerHeight;
+  let x = Math.random() * window.innerWidth;
+  let y = Math.random() * window.innerHeight;
 
-let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+  let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+  let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
 
-let angle = 0;
-let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+  let angle = 0;
+  let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
 
-function moveGurt() {
-  x += dx;
-  y += dy;
-  angle += dAngle;
+  function moveGurt() {
+    x += dx;
+    y += dy;
+    angle += dAngle;
 
-  if (x < -70 || x > window.innerWidth) dx *= -1;
-  if (y < -70 || y > window.innerHeight) dy *= -1;
+    if (x < -70 || x > window.innerWidth) dx *= -1;
+    if (y < -70 || y > window.innerHeight) dy *= -1;
 
-  gurt.style.left = x + "px";
-  gurt.style.top = y + "px";
-  gurt.style.transform = `rotate(${angle}deg)`;
+    gurt.style.left = x + "px";
+    gurt.style.top = y + "px";
+    gurt.style.transform = `rotate(${angle}deg)`;
 
-  requestAnimationFrame(moveGurt);
-}
+    requestAnimationFrame(moveGurt);
+  }
 
-moveGurt();
+  moveGurt();
+})();
 </script>
 
 </body>
