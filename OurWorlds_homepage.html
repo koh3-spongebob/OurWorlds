@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OurWorlds Home</title>
+
+<!-- Cute font -->
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(to bottom, #ffffff, #ff4da6);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== WHITE BACKGROUND STARS ===== */
+  .feed-stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .feed-stars span {
+    position: absolute;
+    color: #ffffff;
+    font-size: 20px;
+    opacity: 0.3;
+    animation: fallFeed linear infinite;
+  }
+
+  @keyframes fallFeed {
+    0% { transform: translateY(-50px); opacity: 0; }
+    10% { opacity: 0.3; }
+    100% { transform: translateY(110vh); opacity: 0.3; }
+  }
+
+  /* ===== PAGE LAYOUT ===== */
+  .container {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    padding: 20px;
+    z-index: 1;
+    overflow-y: auto;
+  }
+
+  /* ===== LEFT PANEL ===== */
+  .left-panel {
+    width: 200px;
+    background: #ff2e93;
+    border-radius: 20px;
+    border: 3px solid white;
+    box-shadow: 0 0 25px rgba(255,255,255,0.7);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .panel-stars span {
+    position: absolute;
+    color: #d40070;
+    font-size: 50px;
+    opacity: 0.6;
+    animation: fallPanel 15s linear infinite;
+  }
+
+  @keyframes fallPanel {
+    0% { transform: translateY(-60px); opacity: 0; }
+    10% { opacity: 0.6; }
+    100% { transform: translateY(600%); opacity: 0.6; }
+  }
+
+  /* Logo */
+  .logo {
+    width: 200px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Profile */
+  .user-profile {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+    color: white;
+  }
+
+  .user-profile img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-bottom: 8px;
+  }
+
+  /* Cute buttons */
+  .left-panel button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(to bottom, #ff8acc, #ff2e93);
+    cursor: pointer;
+    box-shadow: 0 6px #d40070, 0 -2px 6px rgba(255,255,255,0.4) inset;
+    transition: 0.2s;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .left-panel button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px #d40070, 0 -2px 8px rgba(255,255,255,0.5) inset;
+  }
+
+  .left-panel button::before { content: "☆"; }
+  .left-panel button:hover::before { content: "★"; }
+
+  /* ===== MAIN FEED ===== */
+  .main-feed {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Search */
+  .search-bar {
+    width: 500px;
+    margin-bottom: 20px;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 20px;
+    border: 2px solid #ff2e93;
+    outline: none;
+    font-size: 14px;
+  }
+
+  .search-bar input:focus {
+    box-shadow: 0 0 10px #ff2e93;
+  }
+
+  /* Posts */
+  .feed-post {
+    width: 500px;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(255,77,166,0.3);
+    color: #ff2e93; /* feed text pink */
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .post-header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  /* RIGHT SPACE */
+  .right-space {
+    width: 300px;
+    position: relative;
+  }
+
+  /* ===== Gurt ===== */
+  #gurt {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 120px;
+    z-index: 0;
+    opacity: 0.6;
+    transform-origin: center;
+    animation: spinGurt 10s linear infinite;
+  }
+
+  @keyframes spinGurt {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* ===== Speech Bubble ===== */
+  .speech-bubble {
+    position: absolute;
+    bottom: 160px;
+    right: 50px;
+    width: 220px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 20px;
+    color: #ff2e93; /* pink text */
+    font-size: 14px;
+    z-index: 1;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #ffffff transparent transparent transparent;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Background stars -->
+<div class="feed-stars">
+  <span style="left:5%; animation-duration:10s;">☆</span>
+  <span style="left:15%; animation-duration:12s;">★</span>
+  <span style="left:25%; animation-duration:11s;">☆</span>
+  <span style="left:35%; animation-duration:13s;">★</span>
+  <span style="left:45%; animation-duration:14s;">☆</span>
+  <span style="left:55%; animation-duration:10s;">★</span>
+  <span style="left:65%; animation-duration:15s;">☆</span>
+  <span style="left:75%; animation-duration:12s;">★</span>
+  <span style="left:85%; animation-duration:14s;">☆</span>
+  <span style="left:95%; animation-duration:13s;">★</span>
+</div>
+
+<div class="container">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <div class="panel-stars">
+      <span style="left:10%; animation-delay:0s;">★</span>
+      <span style="left:40%; animation-delay:2s;">☆</span>
+      <span style="left:70%; animation-delay:1s;">★</span>
+      <span style="left:20%; animation-delay:3s;">☆</span>
+      <span style="left:80%; animation-delay:0.5s;">★</span>
+    </div>
+
+    <img src="logo.PNG" class="logo">
+
+    <div class="user-profile">
+      <img src="user.png">
+      <div>@YourUsername</div>
+    </div>
+
+    <button>Profile</button>
+    <button>Notifications</button>
+    <button>Friends</button>
+    <button>Worlds</button>
+    <button>Constellations</button>
+    <button>Settings</button>
+  </div>
+
+  <!-- MAIN FEED -->
+  <div class="main-feed">
+
+    <div class="search-bar">
+      <input type="text" placeholder="Search OurWorlds...">
+    </div>
+
+    <div class="feed-post">
+      <div class="post-header">
+        <img src="user.png">
+        <strong>@YourUsername</strong>
+      </div>
+      <div>Welcome to OurWorlds ✨</div>
+    </div>
+
+    <div class="feed-post">
+      <div class="post-header">
+        <img src="user.png">
+        <strong>@OtherUser</strong>
+      </div>
+      <div>Exploring constellations ★☆</div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT SPACE -->
+  <div class="right-space">
+    <img src="gurtHOMEPAGE.png" id="gurt">
+    <div class="speech-bubble">
+      <label for="zodiac">Choose your zodiac:</label>
+      <select id="zodiac">
+        <option value="aries">Aries</option>
+        <option value="taurus">Taurus</option>
+        <option value="gemini">Gemini</option>
+        <option value="cancer">Cancer</option>
+        <option value="leo">Leo</option>
+        <option value="virgo">Virgo</option>
+        <option value="libra">Libra</option>
+        <option value="scorpio">Scorpio</option>
+        <option value="sagittarius">Sagittarius</option>
+        <option value="capricorn">Capricorn</option>
+        <option value="aquarius">Aquarius</option>
+        <option value="pisces">Pisces</option>
+      </select>
+      <p id="horoscope-text">Select your zodiac to see today's horoscope!</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const zodiacSelect = document.getElementById('zodiac');
+  const horoscopeText = document.getElementById('horoscope-text');
+
+  zodiacSelect.addEventListener('change', async () => {
+    const sign = zodiacSelect.value;
+    horoscopeText.textContent = "Loading...";
+
+    try {
+      const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://ohmanda.com/api/horoscope/${sign}`)}`);
+      const data = await response.json();
+      const result = JSON.parse(data.contents);
+      horoscopeText.textContent = result.horoscope;
+    } catch (e) {
+      horoscopeText.textContent = "Could not load horoscope.";
+    }
+  });
+</script>
+
+</body>
+</html>
