@@ -256,5 +256,28 @@
 
   </div>
 
+	<script>
+async function register() {
+  const username = document.querySelector('input[type="text"]').value;
+  const email = document.querySelector('input[type="email"]').value;
+  const password = document.querySelectorAll('input[type="password"]')[0].value;
+
+  const res = await fetch("http://10.0.0.233:3000/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      username,
+      email,
+      password
+    })
+  });
+
+  const text = await res.text();
+  alert(text);
+}
+</script>
+
 </body>
 </html>
