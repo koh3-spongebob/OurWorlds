@@ -149,16 +149,29 @@
 
 <script>
   /* ===== LOGIN FUNCTION ===== */
-  function login() {
-    const user = document.getElementById('username').value;
-    const pass = document.getElementById('password').value;
+  async function login() {
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
 
-    if (user === "ilikespongebob" && pass === "spongebob") {
-      window.location.href = "OurWorlds_homepage.html";
-    } else {
-      alert("Wrong username or password 😭");
-    }
+  const res = await fetch("http://10.0.0.233:3000/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      username: user,
+      password: pass
+    })
+  });
+
+  const text = await res.text();
+
+  if (text === "Login successful") {
+    window.location.href = "OurWorlds_homepage.html";
+  } else {
+    alert(text);
   }
+}
 
   /* ===== GURT MOVEMENT ===== */
   const gurt = document.getElementById('gurt');
