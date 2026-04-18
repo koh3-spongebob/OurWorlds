@@ -16,23 +16,19 @@
     align-items: center;
     background: linear-gradient(to bottom, #ffffff, #ff4da6);
     overflow: hidden;
-    position: relative;
   }
 
-  /* ===== STARS ===== */
   .stars {
     position: absolute;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 0;
   }
 
   .stars span {
     position: absolute;
     color: white;
     font-size: 18px;
-    opacity: 0.8;
     animation: fall linear infinite;
   }
 
@@ -42,7 +38,6 @@
     100% { transform: translateY(110vh); opacity: 0.8; }
   }
 
-  /* ===== LOGIN BOX ===== */
   .login-box {
     position: relative;
     background: #ff2e93;
@@ -52,13 +47,7 @@
     width: 300px;
     text-align: center;
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255,255,255,0.3);
-    z-index: 2;
     color: white;
-  }
-
-  .logo {
-    width: 300px;
-    margin-bottom: 20px;
   }
 
   input {
@@ -68,11 +57,6 @@
     border-radius: 10px;
     border: 2px solid white;
     outline: none;
-    font-family: 'Quicksand', sans-serif;
-  }
-
-  input:focus {
-    box-shadow: 0 0 8px white;
   }
 
   button {
@@ -80,13 +64,10 @@
     padding: 10px 20px;
     border: none;
     border-radius: 15px;
-    background: linear-gradient(to bottom, #ffffff, #ffe6f2);
-    border: 2px solid white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    background: white;
     color: #ff2e93;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
   }
 
   button:hover {
@@ -100,38 +81,30 @@
 
   .links a {
     color: white;
-    text-decoration: underline;
   }
 
-  /* ===== GURT ===== */
   #gurt {
     position: absolute;
     width: 70px;
-    opacity: 0.4;
-    z-index: 1;
+    opacity: 0.5;
     pointer-events: none;
   }
 </style>
 </head>
+
 <body>
 
 <!-- STARS -->
 <div class="stars">
-  <span style="left:5%; animation-duration:6s;">☆</span>
-  <span style="left:15%; animation-duration:8s;">★</span>
-  <span style="left:25%; animation-duration:7s;">☆</span>
-  <span style="left:35%; animation-duration:5s;">★</span>
-  <span style="left:45%; animation-duration:9s;">☆</span>
-  <span style="left:55%; animation-duration:6s;">★</span>
-  <span style="left:65%; animation-duration:7s;">☆</span>
-  <span style="left:75%; animation-duration:8s;">★</span>
-  <span style="left:85%; animation-duration:6s;">☆</span>
-  <span style="left:95%; animation-duration:7s;">★</span>
+  <span style="left:10%; animation-duration:6s;">★</span>
+  <span style="left:30%; animation-duration:8s;">☆</span>
+  <span style="left:50%; animation-duration:5s;">★</span>
+  <span style="left:70%; animation-duration:7s;">☆</span>
 </div>
 
-<!-- LOGIN BOX -->
+<!-- LOGIN -->
 <div class="login-box">
-  <img src="logo.PNG" class="logo" alt="OurWorlds Logo">
+  <h2>Login</h2>
 
   <input type="text" id="username" placeholder="Username">
   <input type="password" id="password" placeholder="Password">
@@ -139,103 +112,72 @@
   <button onclick="login()">Login</button>
 
   <div class="links">
-    <div>Don't have an account? <a href="OurWorlds_registration.html">Create one here</a></div>
-    <div><a href="#">Forgot password?</a></div>
+    <a href="OurWorlds_registration.html">Create account</a>
   </div>
 </div>
 
 <!-- GURT -->
-<img src="gurt.png" id="gurt" alt="Gurt">
+<img src="gurt.png" id="gurt">
 
 <script>
-  /* ===== LOGIN FUNCTION ===== */
-  async function login() {
-  const user = document.getElementById('username').value;
-  const pass = document.getElementById('password').value;
+/* ================= LOGIN ================= */
+async function login() {
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
 
-  const res = await fetch("http://10.0.0.233:3000/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      username: user,
-      password: pass
-    })
-  });
+  try {
+    const res = await fetch("http://10.52.21.86:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: user,
+        password: pass
+      })
+    });
 
-  const text = await res.text();
+    const text = await res.text();
 
-  if (text === "Login successful") {
-    window.location.href = "OurWorlds_homepage.html";
-  } else {
-    alert(text);
+    if (text === "Login successful") {
+      window.location.href = "OurWorlds_homepage.html";
+    } else {
+      alert(text);
+    }
+
+  } catch (err) {
+    console.log(err);
+    alert("Server not reachable");
   }
 }
 
-  /* ===== GURT MOVEMENT ===== */
-  const gurt = document.getElementById('gurt');
+/* ================= GURT ANIMATION ================= */
+const gurt = document.getElementById("gurt");
 
-  let x = Math.random() * window.innerWidth;
-  let y = Math.random() * window.innerHeight;
+let x = Math.random() * window.innerWidth;
+let y = Math.random() * window.innerHeight;
 
-  let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-  let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
 
-  let angle = 0;
-  let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
+let angle = 0;
+let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
 
-  function moveGurt() {
-    x += dx;
-    y += dy;
-    angle += dAngle;
+function moveGurt() {
+  x += dx;
+  y += dy;
+  angle += dAngle;
 
-    if (x < -70 || x > window.innerWidth) dx = -dx;
-    if (y < -70 || y > window.innerHeight) dy = -dy;
+  if (x < -70 || x > window.innerWidth) dx *= -1;
+  if (y < -70 || y > window.innerHeight) dy *= -1;
 
-    gurt.style.left = x + 'px';
-    gurt.style.top = y + 'px';
-    gurt.style.transform = `rotate(${angle}deg)`;
+  gurt.style.left = x + "px";
+  gurt.style.top = y + "px";
+  gurt.style.transform = `rotate(${angle}deg)`;
 
-    requestAnimationFrame(moveGurt);
-  }
+  requestAnimationFrame(moveGurt);
+}
 
-  moveGurt();
+moveGurt();
 </script>
-
-</body>
-</html>
-
-  <!-- Gurt -->
-  <img src="gurt.png" id="gurt" alt="Gurt">
-
-  <script>
-    const gurt = document.getElementById('gurt');
-    let x = Math.random() * window.innerWidth;
-    let y = Math.random() * window.innerHeight;
-    let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-    let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-    let angle = 0;
-    let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-
-    function moveGurt() {
-      x += dx;
-      y += dy;
-      angle += dAngle;
-
-      // Bounce off edges (allow going slightly offscreen)
-      if (x < -70 || x > window.innerWidth) dx = -dx;
-      if (y < -70 || y > window.innerHeight) dy = -dy;
-
-      gurt.style.left = x + 'px';
-      gurt.style.top = y + 'px';
-      gurt.style.transform = `rotate(${angle}deg)`;
-
-      requestAnimationFrame(moveGurt);
-    }
-
-    moveGurt();
-  </script>
 
 </body>
 </html>
