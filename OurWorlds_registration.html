@@ -244,7 +244,7 @@
 
       <div class="links">
         Already have an account?
-        <a href="OurWorlds_login.html">Login here</a>
+        <a href="index.html">Login here</a>
       </div>
 
     </div>
@@ -271,7 +271,7 @@ async function register() {
   }
 
   try {
-    const res = await fetch("http://10.52.21.86:3000/register", {
+    const res = await fetch("http://192.168.206.129:3000/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email, password })
