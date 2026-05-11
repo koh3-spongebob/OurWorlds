@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>OurWorlds Login</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-
 <style>
   body {
     margin: 0;
@@ -17,27 +15,23 @@
     background: linear-gradient(to bottom, #ffffff, #ff4da6);
     overflow: hidden;
   }
-
   .stars {
     position: absolute;
     width: 100%;
     height: 100%;
     pointer-events: none;
   }
-
   .stars span {
     position: absolute;
     color: white;
     font-size: 18px;
     animation: fall linear infinite;
   }
-
   @keyframes fall {
     0% { transform: translateY(-50px); opacity: 0; }
     10% { opacity: 1; }
     100% { transform: translateY(110vh); opacity: 0.8; }
   }
-
   .login-box {
     position: relative;
     background: #ff2e93;
@@ -49,7 +43,6 @@
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255,255,255,0.3);
     color: white;
   }
-
   input {
     width: 90%;
     padding: 10px;
@@ -58,7 +51,6 @@
     border: 2px solid white;
     outline: none;
   }
-
   button {
     margin-top: 15px;
     padding: 10px 20px;
@@ -69,32 +61,16 @@
     font-weight: bold;
     cursor: pointer;
   }
-
-  button:hover {
-    transform: scale(1.05);
-  }
-
-  .links {
-    margin-top: 15px;
-    font-size: 12px;
-  }
-
-  .links a {
-    color: white;
-  }
-
-  #gurt {
-    position: absolute;
-    width: 70px;
-    opacity: 0.5;
-    pointer-events: none;
-  }
+  button:hover { transform: scale(1.05); }
+  .links { margin-top: 15px; font-size: 12px; }
+  .links a { color: white; }
+  #gurt { position: absolute; width: 70px; opacity: 0.5; pointer-events: none; }
 </style>
 </head>
 
 <body>
 
-<!-- STARS -->
+<!-- STARS BACKGROUND -->
 <div class="stars">
   <span style="left:10%; animation-duration:6s;">★</span>
   <span style="left:30%; animation-duration:8s;">☆</span>
@@ -102,28 +78,30 @@
   <span style="left:70%; animation-duration:7s;">☆</span>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN BOX -->
 <div class="login-box">
   <img src="logo.PNG" class="logo" alt="OurWorlds Logo" width="300">
-
   <input type="text" id="username" placeholder="Username">
   <input type="password" id="password" placeholder="Password">
-
   <button onclick="login()">Login</button>
-
   <div class="links">
     <a href="OurWorlds_registration.html">Create account</a>
   </div>
 </div>
 
-<!-- GURT -->
+<!-- GURT ANIMATION -->
 <img src="gurt.png" id="gurt">
 
 <script>
-/* ================= LOGIN ================= */
+/* ================= LOGIN FUNCTION ================= */
 async function login() {
   const user = document.getElementById("username").value;
   const pass = document.getElementById("password").value;
+
+  if (!user || !pass) {
+    alert("Please enter both username and password!");
+    return;
+  }
 
   try {
     const res = await fetch("http://192.168.206.129:3000/login", {
@@ -132,65 +110,49 @@ async function login() {
       body: JSON.stringify({ username: user, password: pass })
     });
 
-    const data = await res.json(); // Use .json() instead of .text()
-
-    if (data.status === "MFA_REQUIRED") {
-      // Save username for the next page
-      localStorage.setItem("pendingUser", user);
-      // Go to the code entry page
-      window.location.href = "mfa.html";
+    // Check if the response is JSON (means MFA is triggered)
+    const contentType = res.headers.get("content-type");
+    
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+      const data = await res.json();
+      
+      if (data.status === "MFA_REQUIRED") {
+        // Store username to verify the code on the next page
+        localStorage.setItem("pendingUser", user);
+        // Redirect to your MFA page
+        window.location.href = "mfa.html";
+      }
     } else {
-      alert(data); 
-    }
-  } catch (err) {
-    console.log(err);
-    alert("Server not reachable");
-  }
-}
-    });
-
-    const text = await res.text();
-
-    if (text === "Login successful") {
-      window.location.href = "OurWorlds_homepage.html";
-    } else {
-      alert(text);
+      // If it's not JSON, it's a plain text error message (e.g., "Wrong password")
+      const errorMessage = await res.text();
+      alert(errorMessage);
     }
 
   } catch (err) {
-    console.log(err);
-    alert("Server not reachable");
+    console.error("Login Error:", err);
+    alert("Server not reachable. Make sure your Backend VM is running!");
   }
 }
 
-/* ================= GURT ANIMATION ================= */
+/* ================= GURT ANIMATION LOGIC ================= */
 (() => {
   const gurt = document.getElementById("gurt");
-
   let x = Math.random() * window.innerWidth;
   let y = Math.random() * window.innerHeight;
-
   let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
   let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
-
   let angle = 0;
   let dAngle = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? 1 : -1);
 
   function moveGurt() {
-    x += dx;
-    y += dy;
-    angle += dAngle;
-
+    x += dx; y += dy; angle += dAngle;
     if (x < -70 || x > window.innerWidth) dx *= -1;
     if (y < -70 || y > window.innerHeight) dy *= -1;
-
     gurt.style.left = x + "px";
     gurt.style.top = y + "px";
     gurt.style.transform = `rotate(${angle}deg)`;
-
     requestAnimationFrame(moveGurt);
   }
-
   moveGurt();
 })();
 </script>
