@@ -272,11 +272,11 @@
     </div>
 
     <button>Profile</button>
-    <button>Notifications</button>
     <button>Friends</button>
     <button>Worlds</button>
     <button>Constellations</button>
-    <button>Settings</button>
+    <button>Talk to Gurt!</button>
+    <button onclick="logout()">Sign Out</button>
   </div>
 
   <!-- MAIN FEED -->
@@ -330,6 +330,11 @@
 </div>
 
 <script>
+function logout() {
+  localStorage.removeItem("loggedIn");
+  window.location.href ="index.html";
+  }
+
   const zodiacSelect = document.getElementById('zodiac');
   const horoscopeText = document.getElementById('horoscope-text');
 
