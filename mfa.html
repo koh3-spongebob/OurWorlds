@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OurWorlds Verification ✨</title>
+    
+    <!-- Cute font (same as login/register) -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: 'Quicksand', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom, #ffffff, #ff4da6);
+            overflow: hidden; /* Stops stars from causing scrollbars */
+        }
+
+        /* ===== FALLING STARS BACKGROUND (Same as login) ===== */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0; /* Puts stars behind the box */
+        }
+
+        .stars span {
+            position: absolute;
+            color: white;
+            font-size: 18px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(110vh); opacity: 0.8; }
+        }
+
+        /* ===== THE MFA ENTRY BOX (Cohesive with logo box) ===== */
+        .mfa-box {
+            position: relative;
+            background: #ff2e93;
+            border: 3px solid white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 320px; /* Slightly wider */
+            text-align: center;
+            color: white;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.7), inset 0 0 15px rgba(255,255,255,0.3);
+            z-index: 1; /* Sits in front of the stars */
+        }
+
+        h2 {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px; /* Slightly taller */
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 2px solid white;
+            outline: none;
+            text-align: center;
+            font-size: 24px; /* Large font for the code */
+            font-weight: bold;
+            color: #ff2e93;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px white;
+        }
+
+        /* ===== CUTE BUTTON ===== */
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 15px;
+            background: white;
+            color: #ff2e93;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: #ffe6f2;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- FALLING STARS BACKGROUND -->
+    <div class="stars">
+        <!-- Add various delays and durations for a randomized feel -->
+        <span style="left:5%; animation-duration:6s;">★</span>
+        <span style="left:15%; animation-duration:8s;">☆</span>
+        <span style="left:25%; animation-duration:7s;">★</span>
+        <span style="left:35%; animation-duration:5s;">☆</span>
+        <span style="left:45%; animation-duration:9s;">★</span>
+        <span style="left:55%; animation-duration:6s;">☆</span>
+        <span style="left:65%; animation-duration:7s;">★</span>
+        <span style="left:75%; animation-duration:8s;">☆</span>
+        <span style="left:85%; animation-duration:6s;">★</span>
+        <span style="left:95%; animation-duration:7s;">☆</span>
+    </div>
+
+    <!-- THE MFA ENTRY BOX -->
+    <div class="mfa-box">
+        <h2>Verify It's You!</h2>
+        <p>A 6-digit verification code was sent to your email. Please enter it below:</p>
+        
+        <input type="text" id="mfaCode" placeholder="000000" maxlength="6" autofocus>
+        
+        <br>
+        <button onclick="verify()">Confirm Code</button>
+    </div>
+
+    <script>
+        async function verify() {
+            const code = document.getElementById("mfaCode").value;
+            // Retrieve username saved from the login page
+            const username = localStorage.getItem("pendingUser");
+
+            if (!code || code.length !== 6) {
+                alert("Please enter the full 6-digit code.");
+                return;
+            }
+
+            try {
+                // Call the new MFA endpoint we built in server.js
+                const res = await fetch("http://192.168.206.129:3000/verify-mfa", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, code })
+                });
+
+                const text = await res.text();
+
+                if (text === "Login successful") {
+                    // Start the session (used in the logout/login check)
+                    localStorage.setItem("loggedIn", "true");
+                    // Clean up temp storage
+                    localStorage.removeItem("pendingUser"); 
+                    // Redirect to the homepage!
+                    window.location.href = "OurWorlds_homepage.html";
+                } else {
+                    alert(text); // Shows "Invalid MFA code"
+                }
+            } catch (err) {
+                console.log(err);
+                alert("Request failed (check console)");
+            }
+        }
+    </script>
+</body>
+</html>
