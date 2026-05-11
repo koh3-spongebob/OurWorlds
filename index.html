@@ -129,10 +129,24 @@ async function login() {
     const res = await fetch("http://192.168.206.129:3000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: user,
-        password: pass
-      })
+      body: JSON.stringify({ username: user, password: pass })
+    });
+
+    const data = await res.json(); // Use .json() instead of .text()
+
+    if (data.status === "MFA_REQUIRED") {
+      // Save username for the next page
+      localStorage.setItem("pendingUser", user);
+      // Go to the code entry page
+      window.location.href = "mfa_entry.html";
+    } else {
+      alert(data); 
+    }
+  } catch (err) {
+    console.log(err);
+    alert("Server not reachable");
+  }
+}
     });
 
     const text = await res.text();
