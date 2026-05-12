@@ -3,32 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <title>OurWorlds Home</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-  /* ... Keep your existing CSS ... */
-  body { margin: 0; font-family: 'Quicksand', sans-serif; background: linear-gradient(to bottom, #ffffff, #ff4da6); display: flex; min-height: 100vh; overflow-x: hidden; }
-  .container { display: flex; flex: 1; gap: 20px; padding: 20px; z-index: 1; overflow-y: auto; }
-  .left-panel { width: 200px; background: #ff2e93; border-radius: 20px; border: 3px solid white; padding: 20px; flex-shrink: 0; }
-  .user-profile img { width: 70px; height: 70px; border-radius: 50%; border: 2px solid white; }
-  
-  /* NEW STYLES FOR POST BOX */
+  body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(to bottom, #ffffff, #ff4da6);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== WHITE BACKGROUND STARS ===== */
+  .feed-stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .feed-stars span {
+    position: absolute;
+    color: #ffffff;
+    font-size: 20px;
+    opacity: 0.3;
+    animation: fallFeed linear infinite;
+  }
+
+  @keyframes fallFeed {
+    0% { transform: translateY(-50px); opacity: 0; }
+    10% { opacity: 0.3; }
+    100% { transform: translateY(110vh); opacity: 0.3; }
+  }
+
+  /* ===== PAGE LAYOUT ===== */
+  .container {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    padding: 20px;
+    z-index: 1;
+    overflow-y: auto;
+  }
+
+  /* ===== LEFT PANEL ===== */
+  .left-panel {
+    width: 200px;
+    background: #ff2e93;
+    border-radius: 20px;
+    border: 3px solid white;
+    box-shadow: 0 0 25px rgba(255,255,255,0.7);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .panel-stars span {
+    position: absolute;
+    color: #d40070;
+    font-size: 50px;
+    opacity: 0.6;
+    animation: fallPanel 15s linear infinite;
+  }
+
+  @keyframes fallPanel {
+    0% { transform: translateY(-60px); opacity: 0; }
+    10% { opacity: 0.6; }
+    100% { transform: translateY(600%); opacity: 0.6; }
+  }
+
+  .logo { width: 200px; margin-bottom: 20px; position: relative; z-index: 1; }
+
+  .user-profile {
+    text-align: center;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+    color: white;
+  }
+
+  .user-profile img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 2px solid white;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  /* Cute buttons */
+  .left-panel button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(to bottom, #ff8acc, #ff2e93);
+    cursor: pointer;
+    box-shadow: 0 6px #d40070, 0 -2px 6px rgba(255,255,255,0.4) inset;
+    transition: 0.2s;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .left-panel button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px #d40070, 0 -2px 8px rgba(255,255,255,0.5) inset;
+  }
+
+  .left-panel button::before { content: "☆"; }
+  .left-panel button:hover::before { content: "★"; }
+
+  /* ===== MAIN FEED ===== */
+  .main-feed { flex: 1; display: flex; flex-direction: column; align-items: center; }
+
+  /* Post Creation Box */
   .post-box {
     width: 500px;
     background: white;
     border-radius: 20px;
-    padding: 15px;
+    padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(255,77,166,0.3);
   }
+
   .post-box textarea {
-    width: 95%;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    width: 100%;
+    border-radius: 15px;
+    border: 2px solid #ff2e93;
     padding: 10px;
-    resize: none;
     font-family: inherit;
+    resize: none;
+    box-sizing: border-box;
   }
+
   .post-box button {
     margin-top: 10px;
     background: #ff2e93;
@@ -36,134 +154,172 @@
     border: none;
     padding: 8px 20px;
     border-radius: 20px;
-    cursor: pointer;
     font-weight: bold;
+    cursor: pointer;
+    float: right;
   }
-  
-  /* MAIN FEED STYLES */
-  .main-feed { flex: 1; display: flex; flex-direction: column; align-items: center; }
-  .search-bar { width: 500px; margin-bottom: 20px; position: relative; }
-  .search-bar input { width: 100%; padding: 12px; border-radius: 20px; border: 2px solid #ff2e93; }
-  .feed-post { width: 500px; background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; color: #ff2e93; }
+
+  .search-bar { width: 500px; margin-bottom: 20px; }
+  .search-bar input {
+    width: 100%; padding: 12px; border-radius: 20px;
+    border: 2px solid #ff2e93; outline: none; font-size: 14px;
+  }
+
+  .feed-post {
+    width: 500px; background: white; border-radius: 20px;
+    padding: 20px; margin-bottom: 20px; box-shadow: 0 0 15px rgba(255,77,166,0.3);
+    color: #ff2e93;
+  }
+
   .post-header { display: flex; align-items: center; margin-bottom: 10px; }
-  .post-header img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
-  
-  /* ... Rest of your Gurt/Star CSS ... */
+  .post-header img { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; }
+
+  /* Gurt & Bubble */
+  .right-space { width: 300px; position: relative; }
+  #gurt {
+    position: absolute; bottom: 20px; right: 20px; width: 120px;
+    z-index: 0; opacity: 0.6; transform-origin: center;
+    animation: spinGurt 10s linear infinite;
+  }
+  @keyframes spinGurt { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .speech-bubble {
+    position: absolute; bottom: 160px; right: 50px; width: 220px;
+    padding: 12px; background: #ffffff; border-radius: 20px;
+    color: #ff2e93; font-size: 14px; z-index: 1;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
 </style>
 </head>
 <body>
 
+<div class="feed-stars">
+  <span style="left:5%; animation-duration:10s;">☆</span>
+  <span style="left:25%; animation-duration:11s;">☆</span>
+  <span style="left:55%; animation-duration:10s;">★</span>
+  <span style="left:85%; animation-duration:14s;">☆</span>
+</div>
+
 <div class="container">
-  <!-- LEFT PANEL -->
   <div class="left-panel">
-    <img src="logo.PNG" class="logo" style="width:100%">
-    <div class="user-profile">
-      <img src="user.png">
-      <div id="display-username">@Guest</div>
+    <div class="panel-stars">
+      <span style="left:10%; animation-delay:0s;">★</span>
+      <span style="left:70%; animation-delay:1s;">★</span>
     </div>
-    <button>Profile</button>
-    <button>Friends</button>
+
+    <img src="logo.PNG" class="logo">
+
+    <div class="user-profile">
+      <img src="user.png" id="userPfp">
+      <div id="display-username">@Loading...</div>
+      <p id="display-bio" style="font-size: 0.8em; opacity: 0.9;"></p>
+    </div>
+
+    <button onclick="openProfile()">Profile</button>
+    <button onclick="showFriends()">Friends</button>
+    <button onclick="showWorlds()">Worlds</button>
+    <button onclick="showBookmarks()">Constellations</button>
+    <button>Talk to Gurt!</button>
     <button onclick="logout()">Sign Out</button>
   </div>
 
-  <!-- MAIN FEED -->
   <div class="main-feed">
-    
-    <!-- SEARCH BAR -->
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search users or #hashtags..." onkeyup="handleSearch(event)">
+      <input type="text" id="searchInput" placeholder="Search OurWorlds..." onkeyup="handleSearch(event)">
     </div>
 
-    <!-- POST BOX -->
+    <!-- NEW POST BOX -->
     <div class="post-box">
-      <textarea id="postContent" rows="3" placeholder="What's happening in your world? (Use #hashtags!)"></textarea>
+      <textarea id="postContent" rows="3" placeholder="What's on your mind? #HashtagIt!"></textarea>
       <button onclick="submitPost()">Post ✨</button>
     </div>
 
-    <!-- POSTS CONTAINER -->
     <div id="feed-container">
-      <!-- Posts will appear here dynamically -->
-      <div class="feed-post">Loading your world...</div>
+      <!-- Dynamic posts go here -->
     </div>
   </div>
 
-  <!-- RIGHT SPACE (Gurt & Horoscope) -->
   <div class="right-space">
-    <!-- Keep your Gurt and Horoscope HTML here -->
+    <img src="gurtHOMEPAGE.png" id="gurt">
+    <div class="speech-bubble">
+      <label for="zodiac">Your zodiac:</label>
+      <select id="zodiac">
+        <option value="aries">Aries</option>
+        <option value="pisces">Pisces</option>
+      </select>
+      <p id="horoscope-text">Select your sign!</p>
+    </div>
   </div>
 </div>
 
 <script>
-  // 1. SET USERNAME ON LOAD
+  // UPDATE THIS TO YOUR VM2 BACKEND IP
+  const API_URL = "http://192.168.254.129:3000";
   const currentUser = localStorage.getItem("username") || "Guest";
   document.getElementById("display-username").textContent = "@" + currentUser;
 
-  const API_URL = "http://192.168.206.129:3000";
-
-  // 2. SUBMIT A POST
+  // 1. Submit a post to VM3 (Database)
   async function submitPost() {
     const content = document.getElementById("postContent").value;
-    if (!content) return;
-
-    try {
-      const res = await fetch(`${API_URL}/post`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: currentUser, content })
-      });
-      
-      if (res.ok) {
-        document.getElementById("postContent").value = "";
-        alert("Posted to the stars! ★");
-        location.reload(); // Refresh to see new post
-      }
-    } catch (err) {
-      alert("Post failed. Is the server running?");
-    }
-  }
-
-  // 3. SEARCH LOGIC
-  async function handleSearch(event) {
-    if (event.key === "Enter") {
-      const query = document.getElementById("searchInput").value;
-      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
-      const data = await res.json();
-      
-      const container = document.getElementById("feed-container");
-      container.innerHTML = `<h3>Search Results for "${query}"</h3>`;
-
-      // Show found Users
-      data.users.forEach(u => {
-        container.innerHTML += `<div class="feed-post">User Found: <strong>@${u.username}</strong> <button onclick="addFriend('${u.username}')">Add Friend</button></div>`;
-      });
-
-      // Show found Posts (Hashtags)
-      data.posts.forEach(p => {
-        container.innerHTML += `
-          <div class="feed-post">
-            <div class="post-header"><strong>@${p.author}</strong></div>
-            <div>${p.content}</div>
-          </div>`;
-      });
-    }
-  }
-
-  // 4. ADD FRIEND LOGIC
-  async function addFriend(friendName) {
-    await fetch(`${API_URL}/add-friend`, {
+    if(!content) return;
+    const res = await fetch(`${API_URL}/post`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: currentUser, friendName })
+      body: JSON.stringify({ username: currentUser, content })
     });
-    alert("Friend Added!");
+    if(res.ok) {
+       document.getElementById("postContent").value = "";
+       alert("Posted to the stars!");
+       location.reload();
+    }
   }
+
+  // 2. Fetch all posts to show on home page
+  async function loadFeed() {
+    // We'll use the search route with a blank query to get all, 
+    // or you can add a simple app.get("/posts") to your server.js
+    const res = await fetch(`${API_URL}/search?q=`);
+    const data = await res.json();
+    const container = document.getElementById("feed-container");
+    container.innerHTML = "";
+    
+    data.posts.forEach(p => {
+      container.innerHTML += `
+        <div class="feed-post">
+          <div class="post-header">
+            <img src="user.png">
+            <strong>@${p.author}</strong>
+          </div>
+          <div>${p.content}</div>
+        </div>`;
+    });
+  }
+
+  // 3. Search Logic
+  async function handleSearch(event) {
+    if (event.key === "Enter") {
+      const q = document.getElementById("searchInput").value;
+      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const container = document.getElementById("feed-container");
+      container.innerHTML = `<h3>Results for ${q}</h3>`;
+      data.posts.forEach(p => {
+        container.innerHTML += `<div class="feed-post"><strong>@${p.author}</strong>: ${p.content}</div>`;
+      });
+    }
+  }
+
+  // Placeholder functions for your deliverables
+  function openProfile() { alert("Bio and PFP Update coming soon!"); }
+  function showFriends() { alert("Showing your added friends..."); }
+  function showWorlds() { alert("Trending Hashtags: #OurWorlds #StarNode"); }
+  function showBookmarks() { alert("Constellations: Your saved posts"); }
 
   function logout() {
     localStorage.clear();
-    window.location.href = "index.html";
+    window.location.href ="index.html";
   }
 
-  // ... Keep your Horoscope script here ...
+  window.onload = loadFeed;
 </script>
 </body>
 </html>
