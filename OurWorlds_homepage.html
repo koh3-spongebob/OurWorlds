@@ -1,159 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OurWorlds - Home</title>
-    <style>
-        :root { --primary: #ff2e93; --bg: #f0f2f5; --text: #1c1e21; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; }
+<meta charset="UTF-8">
+<title>OurWorlds Home ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
-        /* Left Sidebar */
-        .sidebar { width: 250px; height: 100vh; background: white; border-right: 1px solid #ddd; position: fixed; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .logo { font-size: 28px; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
-        .nav-item { padding: 12px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: 500; transition: 0.2s; text-decoration: none; color: inherit; }
-        .nav-item:hover { background: #f2f2f2; }
-        .nav-item.active { color: var(--primary); background: #fff0f6; }
+<style>
+  body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(to bottom, #ffffff, #ff4da6);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        /* Main Content Area */
-        main { margin-left: 280px; width: 600px; padding: 20px; }
-        
-        /* Post Box */
-        .post-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        textarea { width: 100%; height: 100px; border: 1px solid #ddd; border-radius: 8px; padding: 12px; font-size: 16px; resize: none; box-sizing: border-box; }
-        .post-btn { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 20px; cursor: pointer; font-weight: bold; float: right; margin-top: 10px; transition: 0.3s; }
-        .post-btn:hover { opacity: 0.9; }
+  /* ===== FALLING STARS BACKGROUND ===== */
+  .feed-stars {
+    position: absolute; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+  .feed-stars span {
+    position: absolute; color: #ffffff; font-size: 20px;
+    opacity: 0.3; animation: fallFeed linear infinite;
+  }
+  @keyframes fallFeed {
+    0% { transform: translateY(-50px); opacity: 0; }
+    10% { opacity: 0.3; }
+    100% { transform: translateY(110vh); opacity: 0.3; }
+  }
 
-        /* Feed */
-        .feed-post { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .post-header img { width: 45px; height: 45px; border-radius: 50%; background: #eee; }
-        .post-content { font-size: 16px; line-height: 1.5; margin-bottom: 15px; }
+  /* ===== PAGE LAYOUT ===== */
+  .container { display: flex; flex: 1; gap: 20px; padding: 20px; z-index: 1; }
 
-        /* Star Button */
-        .star-action { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 14px; border-radius: 18px; border: 1px solid #ffcae5; background: #fff0f6; color: var(--primary); font-weight: bold; }
-        .star-action:hover { background: #ffdef0; }
+  /* ===== LEFT SIDEBAR (Cute Buttons) ===== */
+  .left-panel {
+    width: 220px; background: #ff2e93; border-radius: 25px;
+    border: 3px solid white; box-shadow: 0 0 25px rgba(255,255,255,0.7);
+    padding: 20px; position: relative; overflow: hidden; flex-shrink: 0; height: fit-content;
+  }
+  .panel-stars span {
+    position: absolute; color: #d40070; font-size: 40px;
+    opacity: 0.4; animation: fallPanel 12s linear infinite;
+  }
+  @keyframes fallPanel {
+    0% { transform: translateY(-60px); opacity: 0; }
+    100% { transform: translateY(800px); opacity: 0.4; }
+  }
 
-        /* Right Panel (Trending/Friends) */
-        .right-panel { width: 300px; margin-left: 30px; padding-top: 20px; position: sticky; top: 0; }
-        .panel-box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .panel-title { font-weight: bold; font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    </style>
+  .logo { width: 100%; margin-bottom: 15px; position: relative; z-index: 2; }
+  .user-profile { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; color: white; }
+  .user-profile img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; background: white; object-fit: cover; }
+
+  .left-panel button {
+    width: 100%; margin: 8px 0; padding: 12px; border: none; border-radius: 25px;
+    font-weight: bold; color: white; background: linear-gradient(to bottom, #ff8acc, #ff2e93);
+    cursor: pointer; box-shadow: 0 6px #d40070, 0 -2px 6px rgba(255,255,255,0.4) inset;
+    transition: 0.2s; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .left-panel button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px #d40070, 0 -2px 8px rgba(255,255,255,0.5) inset; }
+  .left-panel button::before { content: "☆"; }
+  .left-panel button:hover::before { content: "★"; }
+
+  /* ===== MAIN FEED AREA ===== */
+  .main-feed { flex: 1; display: flex; flex-direction: column; align-items: center; max-width: 600px; margin: 0 auto; }
+  .search-bar { width: 100%; margin-bottom: 20px; }
+  .search-bar input {
+    width: 100%; padding: 15px; border-radius: 30px; border: 3px solid #ff2e93;
+    outline: none; font-family: inherit; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  .post-box {
+    width: 100%; background: white; border-radius: 20px; padding: 20px;
+    margin-bottom: 25px; box-shadow: 0 8px 20px rgba(255,77,166,0.2); box-sizing: border-box;
+  }
+  .post-box textarea {
+    width: 100%; border-radius: 15px; border: 2px solid #ffcae5; padding: 15px;
+    font-family: inherit; resize: none; box-sizing: border-box; outline: none;
+  }
+  .post-box button {
+    margin-top: 10px; background: #ff2e93; color: white; border: none;
+    padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; float: right;
+  }
+
+  .feed-post {
+    width: 100%; background: white; border-radius: 20px; padding: 20px;
+    margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: #444; box-sizing: border-box;
+  }
+  .post-header { display: flex; align-items: center; margin-bottom: 12px; }
+  .post-header img { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; border: 2px solid #ff2e93; object-fit: cover; }
+  .post-header strong { color: #ff2e93; }
+
+  /* ✨ CUTE STAR BUTTON ✨ */
+  .star-btn {
+    margin-top: 10px; background: #fff0f6; border: 1px solid #ffcae5;
+    padding: 6px 12px; border-radius: 15px; color: #ff2e93; font-weight: bold;
+    cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px;
+  }
+  .star-btn:hover { background: #ffdef0; transform: scale(1.05); }
+
+  /* ===== RIGHT SIDE (GURT & LIVE API) ===== */
+  .right-space { width: 250px; position: relative; }
+  #gurt {
+    position: fixed; bottom: 30px; right: 40px; width: 140px;
+    z-index: 5; opacity: 0.8; transform-origin: center;
+    animation: spinGurt 12s linear infinite;
+  }
+  @keyframes spinGurt { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .speech-bubble {
+    position: fixed; bottom: 180px; right: 40px; width: 200px;
+    padding: 15px; background: #ffffff; border-radius: 20px;
+    color: #ff2e93; font-size: 14px; z-index: 6;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid #ff2e93;
+  }
+  .speech-bubble::after {
+    content: ''; position: absolute; bottom: -12px; right: 50px;
+    border-width: 12px 12px 0; border-style: solid; border-color: #ff2e93 transparent;
+  }
+
+  .modal {
+    display: none; position: fixed; z-index: 100; left: 0; top: 0;
+    width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);
+  }
+  .modal-content {
+    background-color: white; margin: 15% auto; padding: 30px;
+    border: 3px solid #ff2e93; width: 300px; border-radius: 25px;
+    text-align: center; box-shadow: 0 0 30px rgba(255,255,255,0.5);
+  }
+  .modal-content input {
+    width: 90%; padding: 10px; margin: 10px 0; border-radius: 10px;
+    border: 2px solid #ffcae5; outline: none;
+    font-family: 'Quicksand', sans-serif;
+  }
+  .modal-content button {
+    margin-top: 10px; padding: 10px 20px; border-radius: 15px; border: none;
+    background: #ff2e93; color: white; font-weight: bold; cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+  }
+</style>
 </head>
 <body>
 
-    <!-- Sidebar Restored -->
-    <nav class="sidebar">
-        <div class="logo">OurWorlds</div>
-        <a href="#" class="nav-item active">🏠 Home</a>
-        <a href="#" class="nav-item">🔭 Explore</a>
-        <a href="#" class="nav-item">✨ Constellations</a>
-        <a href="profile.html" class="nav-item">👤 Profile</a>
-        <a href="index.html" class="nav-item" onclick="localStorage.clear()">🚪 Logout</a>
-    </nav>
+<div class="feed-stars">
+  <span style="left:5%; animation-duration:10s;">☆</span>
+  <span style="left:25%; animation-duration:11s;">☆</span>
+  <span style="left:55%; animation-duration:10s;">★</span>
+  <span style="left:85%; animation-duration:14s;">☆</span>
+</div>
 
-    <main>
-        <div class="post-box">
-            <textarea id="postContent" placeholder="What's happening?"></textarea>
-            <button class="post-btn" onclick="submitPost()">Post</button>
-            <div style="clear:both;"></div>
-        </div>
-
-        <div id="feedContainer">
-            <div style="text-align:center; color:#888;">Synchronizing with the universe...</div>
-        </div>
-    </main>
-
-    <!-- Right Panel Restored -->
-    <div class="right-panel">
-        <div class="panel-box">
-            <div class="panel-title">Trending Hashtags</div>
-            <div style="color: var(--primary); cursor: pointer;">#OurWorlds #NodeJS #VM3</div>
-        </div>
-        <div class="panel-box">
-            <div class="panel-title">Friends Online</div>
-            <div id="friendsList" style="font-size: 14px; color: #666;">No friends online yet.</div>
-        </div>
+<div class="container">
+  <!-- SIDEBAR -->
+  <div class="left-panel">
+    <div class="panel-stars"><span style="left:10%;">★</span><span style="left:60%;">★</span></div>
+    <img src="logo.PNG" class="logo">
+    <div class="user-profile">
+      <img src="user.png" id="userPfp">
+      <div id="display-username">@Guest</div>
     </div>
+    <button onclick="openProfile()">Profile</button>
+    <button onclick="alert('Friends Feature!')">Friends</button>
+    <button onclick="alert('Exploring Worlds!')">Worlds</button>
+    <button onclick="alert('Constellations!')">Bookmarks</button>
+    <button onclick="fetchStarWisdom()">Talk to Gurt!</button>
+    <button onclick="logout()">Sign Out</button>
+  </div>
 
-    <script>
-        const API_URL = "http://192.168.254.129:3000";
-        const currentUser = localStorage.getItem("ourworlds_user") || "Guest";
+  <!-- FEED -->
+  <div class="main-feed">
+    <div class="search-bar"><input type="text" id="searchInput" placeholder="Search the galaxy..." onkeyup="handleSearch(event)"></div>
+    <div class="post-box">
+      <textarea id="postContent" rows="3" placeholder="What's happening in your world?"></textarea>
+      <button onclick="submitPost()">Post ✨</button>
+    </div>
+    <div id="feed-container"></div>
+  </div>
 
-        async function loadFeed() {
-            try {
-                const res = await fetch(`${API_URL}/search?q=`);
-                const data = await res.json();
-                const container = document.getElementById("feedContainer");
-                container.innerHTML = "";
+  <!-- GURT & LIVE API WISDOM -->
+  <div class="right-space">
+    <div class="speech-bubble">
+      <strong style="display:block; margin-bottom: 5px;">✨ Star Wisdom:</strong>
+      <p id="affirmation-text">Receiving a signal...</p>
+    </div>
+    <img src="gurtHOMEPAGE.png" id="gurt">
+  </div>
+</div>
 
-                if (!data.posts || data.posts.length === 0) {
-                    container.innerHTML = "<div style='text-align:center; padding:20px; color:#888;'>The world is quiet... for now.</div>";
-                    return;
-                }
+<!-- PROFILE SETTINGS MODAL -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <h2 style="color:#ff2e93;">Edit Profile ✨</h2>
+    <input type="text" id="newDisplayName" placeholder="New Display Name">
+    <input type="text" id="newPfpUrl" placeholder="Image URL (Direct Link)">
+    <div style="margin-top:10px;">
+      <button id="saveBtn" onclick="saveProfile()">Save Changes</button>
+      <button onclick="closeProfile()" style="background:#ccc; margin-left:5px;">Cancel</button>
+    </div>
+  </div>
+</div>
 
-                data.posts.reverse().forEach(p => {
-                    const isStarred = p.stars && p.stars.includes(currentUser);
-                    const starIcon = isStarred ? "★" : "☆";
-                    const starCount = p.stars ? p.stars.length : 0;
+<script>
+  const API_URL = "http://192.168.254.129:3000";
+  const currentUser = localStorage.getItem("username") || "Guest";
 
-                    container.innerHTML += `
-                        <div class="feed-post">
-                            <div class="post-header">
-                                <img src="user.png">
-                                <div>
-                                    <strong>@${p.author}</strong><br>
-                                    <small style="color:#888;">${new Date(p.timestamp).toLocaleTimeString()}</small>
-                                </div>
-                            </div>
-                            <div class="post-content">${p.content}</div>
-                            <div class="star-action" onclick="starPost('${p._id}')">
-                                <span>${starIcon}</span>
-                                <span>${starCount}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-            } catch (err) {
-                document.getElementById("feedContainer").innerHTML = "<div style='color:red;'>Failed to reach VM3 database.</div>";
-            }
+  // --- PROFILE LOGIC ---
+  function openProfile() {
+    document.getElementById("profileModal").style.display = "block";
+  }
+
+  function closeProfile() {
+    document.getElementById("profileModal").style.display = "none";
+  }
+
+  async function saveProfile() {
+    const newName = document.getElementById("newDisplayName").value;
+    const newPic = document.getElementById("newPfpUrl").value;
+    const saveBtn = document.getElementById("saveBtn");
+
+    if (!newName && !newPic) {
+      alert("Please fill in something to change!");
+      return;
+    }
+
+    saveBtn.textContent = "Saving...";
+    saveBtn.disabled = true;
+
+    try {
+      const res = await fetch(`${API_URL}/update-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          username: currentUser, 
+          displayName: newName, 
+          profileIcon: newPic 
+        })
+      });
+
+      if(res.ok) {
+        if(newName) localStorage.setItem("displayName", newName);
+        if(newPic) localStorage.setItem("pfpUrl", newPic);
+        alert("Profile Updated! 🌟");
+        location.reload(); 
+      } else {
+        alert("Server failed to update.");
+        saveBtn.textContent = "Save Changes";
+        saveBtn.disabled = false;
+      }
+    } catch (e) { 
+      alert("Error: Backend is offline.");
+      saveBtn.textContent = "Save Changes";
+      saveBtn.disabled = false;
+    }
+  }
+
+  // --- EXTERNAL API ---
+  async function fetchStarWisdom() {
+    const textElement = document.getElementById("affirmation-text");
+    try {
+      const response = await fetch('https://api.quotable.io/random?tags=inspirational');
+      const data = await response.json();
+      textElement.textContent = `"${data.content}"`;
+    } catch (error) {
+      textElement.textContent = "The stars say: You're doing great! ✨";
+    }
+  }
+
+  // --- POSTING LOGIC ---
+  async function submitPost() {
+    const content = document.getElementById("postContent").value;
+    if(!content) return;
+    try {
+      const res = await fetch(`${API_URL}/post`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: currentUser, content: content })
+      });
+      if(res.ok) { 
+        document.getElementById("postContent").value = ""; 
+        loadFeed(); 
+      }
+    } catch (e) { 
+        console.error(e);
+        alert("Backend offline!"); 
+    }
+  }
+
+  // --- STAR/LIKE LOGIC ---
+  async function starPost(postId) {
+    try {
+        const res = await fetch(`${API_URL}/star-post`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: currentUser, postId: postId })
+        });
+        if(res.ok) {
+            loadFeed(); // Reload to update star icons/counts
         }
+    } catch (e) {
+        console.error("Starring error");
+    }
+  }
 
-        async function submitPost() {
-            const content = document.getElementById("postContent").value;
-            if (!content) return;
+  // --- FEED LOAD ---
+  async function loadFeed() {
+    try {
+      const savedName = localStorage.getItem("displayName");
+      const savedPfp = localStorage.getItem("pfpUrl");
+      
+      document.getElementById("display-username").textContent = "@" + (savedName || currentUser);
+      if(savedPfp) document.getElementById("userPfp").src = savedPfp;
 
-            try {
-                const res = await fetch(`${API_URL}/post`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username: currentUser, content: content })
-                });
+      const res = await fetch(`${API_URL}/search?q=`);
+      const data = await res.json();
+      const container = document.getElementById("feed-container");
+      container.innerHTML = "";
+      
+      data.posts.reverse().forEach(p => {
+        const hasStarred = p.stars && p.stars.includes(currentUser);
+        const starIcon = hasStarred ? "★" : "☆";
+        const starCount = p.stars ? p.stars.length : 0;
 
-                if (res.ok) {
-                    document.getElementById("postContent").value = "";
-                    loadFeed();
-                }
-            } catch (err) {
-                alert("Error connecting to server.");
-            }
-        }
+        container.innerHTML += `
+          <div class="feed-post">
+            <div class="post-header">
+              <img src="user.png">
+              <strong>@${p.author}</strong>
+            </div>
+            <div>${p.content}</div>
+            <button class="star-btn" onclick="starPost('${p._id}')">
+                <span>${starIcon}</span>
+                <span>${starCount}</span>
+            </button>
+          </div>`;
+      });
+    } catch (e) { console.log("Feed load failed"); }
+  }
 
-        async function starPost(postId) {
-            try {
-                const res = await fetch(`${API_URL}/star-post`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username: currentUser, postId: postId })
-                });
-                if (res.ok) loadFeed();
-            } catch (err) {
-                console.error("Starring failed");
-            }
-        }
+  // --- SEARCH BAR ---
+  async function handleSearch(event) {
+    if (event.key === "Enter") {
+      const q = document.getElementById("searchInput").value;
+      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const container = document.getElementById("feed-container");
+      container.innerHTML = `<h3 style="color:#ff2e93; margin-top:0;">Results for "${q}"</h3>`;
+      
+      data.posts.forEach(p => {
+        const hasStarred = p.stars && p.stars.includes(currentUser);
+        const starIcon = hasStarred ? "★" : "☆";
+        const starCount = p.stars ? p.stars.length : 0;
 
-        // Initial load
-        loadFeed();
-    </script>
+        container.innerHTML += `
+          <div class="feed-post">
+            <div class="post-header"><img src="user.png"><strong>@${p.author}</strong></div>
+            <div>${p.content}</div>
+            <button class="star-btn" onclick="starPost('${p._id}')">
+                <span>${starIcon}</span>
+                <span>${starCount}</span>
+            </button>
+          </div>`;
+      });
+    }
+  }
+
+  function logout() { localStorage.clear(); window.location.href ="index.html"; }
+
+  window.onload = () => {
+    loadFeed();
+    fetchStarWisdom();
+  };
+</script>
 </body>
 </html>
