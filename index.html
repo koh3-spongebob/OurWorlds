@@ -122,18 +122,23 @@ async function login() {
         return;
       }
 
-      // ✅ SUCCESS LOGIN (NO MFA)
+      // ✅ FULL LOGIN SUCCESS (NO MFA)
       localStorage.setItem("username", user);
+      localStorage.removeItem("pendingUser");
 
       if (data.profileIcon) {
         localStorage.setItem("pfpUrl", data.profileIcon);
       }
 
-      window.location.href = "index.html"; // or your home page
+      if (data.displayName) {
+        localStorage.setItem("displayName", data.displayName);
+      }
+
+      window.location.href = "index.html"; // your homepage
       return;
     }
 
-    // ❌ ERROR RESPONSE (plain text)
+    // ❌ ERROR (plain text)
     const errorMessage = await res.text();
     alert(errorMessage);
 
