@@ -144,7 +144,7 @@
 
             try {
                 // Call the new MFA endpoint we built in server.js
-                const res = await fetch("http://192.168.206.129:3000/verify-mfa", {
+                const res = await fetch("http://192.168.254.128:3000/verify-mfa", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ username, code })
