@@ -153,13 +153,17 @@
                 const text = await res.text();
 
                 if (text === "Login successful") {
-                    // Start the session (used in the logout/login check)
-                    localStorage.setItem("loggedIn", "true");
-                    // Clean up temp storage
-                    localStorage.removeItem("pendingUser"); 
-                    // Redirect to the homepage!
-                    window.location.href = "OurWorlds_homepage.html";
-                } else {
+    localStorage.setItem("loggedIn", "true");
+
+    const username = localStorage.getItem("pendingUser");
+
+    // 🔥 THIS IS THE MISSING PIECE
+    localStorage.setItem("username", username);
+
+    localStorage.removeItem("pendingUser");
+
+    window.location.href = "OurWorlds_homepage.html";
+} else {
                     alert(text); // Shows "Invalid MFA code"
                 }
             } catch (err) {
