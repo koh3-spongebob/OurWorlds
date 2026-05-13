@@ -94,7 +94,8 @@
   .right-space { width: 250px; position: relative; }
   #gurt {
     position: fixed; bottom: 30px; right: 40px; width: 140px;
-    z-index: 5; opacity: 0.8; animation: spinGurt 12s linear infinite;
+    z-index: 5; opacity: 0.8; transform-origin: center;
+    animation: spinGurt 12s linear infinite;
   }
   @keyframes spinGurt { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -122,10 +123,12 @@
   .modal-content input {
     width: 90%; padding: 10px; margin: 10px 0; border-radius: 10px;
     border: 2px solid #ffcae5; outline: none;
+    font-family: 'Quicksand', sans-serif;
   }
   .modal-content button {
     margin-top: 10px; padding: 10px 20px; border-radius: 15px; border: none;
     background: #ff2e93; color: white; font-weight: bold; cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
   }
 </style>
 </head>
@@ -180,9 +183,11 @@
   <div class="modal-content">
     <h2 style="color:#ff2e93;">Edit Profile ✨</h2>
     <input type="text" id="newDisplayName" placeholder="New Display Name">
-    <input type="text" id="newPfpUrl" placeholder="Image URL (e.g. imgur.com/...)">
-    <button onclick="saveProfile()">Save Changes</button>
-    <button onclick="closeProfile()" style="background:#ccc; margin-left:5px;">Cancel</button>
+    <input type="text" id="newPfpUrl" placeholder="Image URL (Direct Link)">
+    <div style="margin-top:10px;">
+      <button id="saveBtn" onclick="saveProfile()">Save Changes</button>
+      <button onclick="closeProfile()" style="background:#ccc; margin-left:5px;">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -202,6 +207,15 @@
   async function saveProfile() {
     const newName = document.getElementById("newDisplayName").value;
     const newPic = document.getElementById("newPfpUrl").value;
+    const saveBtn = document.getElementById("saveBtn");
+
+    if (!newName && !newPic) {
+      alert("Please fill in something to change!");
+      return;
+    }
+
+    saveBtn.textContent = "Saving...";
+    saveBtn.disabled = true;
 
     try {
       const res = await fetch(`${API_URL}/update-profile`, {
@@ -210,7 +224,7 @@
         body: JSON.stringify({ 
           username: currentUser, 
           displayName: newName, 
-          pfpUrl: newPic 
+          profileIcon: newPic // Matches server.js key!
         })
       });
 
@@ -218,9 +232,17 @@
         if(newName) localStorage.setItem("displayName", newName);
         if(newPic) localStorage.setItem("pfpUrl", newPic);
         alert("Profile Updated! 🌟");
-        location.reload();
+        location.reload(); 
+      } else {
+        alert("Server failed to update.");
+        saveBtn.textContent = "Save Changes";
+        saveBtn.disabled = false;
       }
-    } catch (e) { alert("Error connecting to server."); }
+    } catch (e) { 
+      alert("Error: Backend is offline.");
+      saveBtn.textContent = "Save Changes";
+      saveBtn.disabled = false;
+    }
   }
 
   // --- EXTERNAL API ---
@@ -249,20 +271,22 @@
     } catch (e) { alert("Backend offline!"); }
   }
 
-  // --- FEED LOAD ---
+  // --- FEED LOAD & UI INITIALIZATION ---
   async function loadFeed() {
     try {
+      // 1. Update Profile UI from LocalStorage
+      const savedName = localStorage.getItem("displayName");
+      const savedPfp = localStorage.getItem("pfpUrl");
+      
+      document.getElementById("display-username").textContent = "@" + (savedName || currentUser);
+      if(savedPfp) document.getElementById("userPfp").src = savedPfp;
+
+      // 2. Fetch Posts
       const res = await fetch(`${API_URL}/search?q=`);
       const data = await res.json();
       const container = document.getElementById("feed-container");
       container.innerHTML = "";
       
-      // Load user display data
-      const savedName = localStorage.getItem("displayName") || currentUser;
-      const savedPfp = localStorage.getItem("pfpUrl") || "user.png";
-      document.getElementById("display-username").textContent = "@" + savedName;
-      document.getElementById("userPfp").src = savedPfp;
-
       data.posts.reverse().forEach(p => {
         container.innerHTML += `
           <div class="feed-post">
@@ -270,7 +294,21 @@
             <div>${p.content}</div>
           </div>`;
       });
-    } catch (e) { console.log("Feed failed"); }
+    } catch (e) { console.log("Feed load failed"); }
+  }
+
+  // --- SEARCH BAR ---
+  async function handleSearch(event) {
+    if (event.key === "Enter") {
+      const q = document.getElementById("searchInput").value;
+      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      const container = document.getElementById("feed-container");
+      container.innerHTML = `<h3 style="color:white;">Results for "${q}"</h3>`;
+      data.posts.forEach(p => {
+        container.innerHTML += `<div class="feed-post"><strong>@${p.author}</strong>: ${p.content}</div>`;
+      });
+    }
   }
 
   function logout() { localStorage.clear(); window.location.href ="index.html"; }
