@@ -132,70 +132,57 @@
     </div>
 
     <script>
-       async function verify() {
-    const code = document.getElementById("mfaCode").value;
-    const username = localStorage.getItem("pendingUser");
+    // We must define the function as 'async' so we can use 'await' inside it
+    async function verify() {
+        console.log("Verify function triggered!"); // Debugging line
 
-    if (!code || code.length !== 6) {
-        alert("Please enter the full 6-digit code.");
-        return;
-    }
+        const codeInput = document.getElementById("mfaCode");
+        const code = codeInput.value;
+        const username = localStorage.getItem("pendingUser");
 
-    try {
-        const res = await fetch("http://192.168.254.128:3000/verify-mfa", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, code })
-        });
-
-        // 1. Parse the response as JSON (since we changed server.js)
-        const data = await res.json();
-
-        // 2. Check the status field we created in server.js
-        if (data.status === "success") {
-            localStorage.setItem("loggedIn", "true");
-            localStorage.setItem("username", username);
-
-            // Save the profile info if the server sent it back here
-            if (data.displayName) localStorage.setItem("displayName", data.displayName);
-            if (data.profileIcon) localStorage.setItem("pfpUrl", data.profileIcon);
-
-            localStorage.removeItem("pendingUser");
-
-            // 3. Move to the homepage
-            window.location.href = "OurWorlds_homepage.html";
-        } else {
-            // If server sent an error message in the JSON
-            alert(data.message || "Invalid MFA code");
+        if (!code || code.length !== 6) {
+            alert("Please enter the full 6-digit code.");
+            return;
         }
-    } catch (err) {
-        console.error(err);
-        // If the server didn't send JSON (maybe an error happened), fall back to text
-        alert("Verification failed. Check your console!");
-    }
-}
 
-                const text = await res.text();
+        if (!username) {
+            alert("Session expired. Please log in again.");
+            window.location.href = "login.html"; // Or whatever your login file is
+            return;
+        }
 
-                if (text === "Login successful") {
-    localStorage.setItem("loggedIn", "true");
+        try {
+            // Match this IP to your server.js (192.168.254.129)
+            const res = await fetch("http://192.168.254.128:3000/verify-mfa", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, code })
+            });
 
-    const username = localStorage.getItem("pendingUser");
+            // We parse as JSON because your server.js now sends res.json
+            const data = await res.json();
 
-    // 🔥 THIS IS THE MISSING PIECE
-    localStorage.setItem("username", username);
+            if (res.ok && data.status === "success") {
+                // Save the data to local storage for the homepage
+                localStorage.setItem("loggedIn", "true");
+                localStorage.setItem("username", username);
+                
+                if (data.displayName) localStorage.setItem("displayName", data.displayName);
+                if (data.profileIcon) localStorage.setItem("pfpUrl", data.profileIcon);
 
-    localStorage.removeItem("pendingUser");
+                localStorage.removeItem("pendingUser");
 
-    window.location.href = "OurWorlds_homepage.html";
-} else {
-                    alert(text); // Shows "Invalid MFA code"
-                }
-            } catch (err) {
-                console.log(err);
-                alert("Request failed (check console)");
+                alert("Success! Welcome to OurWorlds ✨");
+                window.location.href = "OurWorlds_homepage.html";
+            } else {
+                alert(data.message || "Invalid MFA code. Please try again.");
             }
+
+        } catch (err) {
+            console.error("MFA Error:", err);
+            alert("Connection failed! Check if server.js is running on .129");
         }
-    </script>
+    }
+</script>
 </body>
 </html>
