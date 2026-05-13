@@ -275,16 +275,21 @@
     } catch (e) { console.log("Feed offline"); }
   }
 
-  function renderPosts(posts) {
+ function renderPosts(posts) {
     const container = document.getElementById("feed-container");
     container.innerHTML = "";
     posts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(p => {
       const starred = p.stars && p.stars.includes(currentUser);
+      
+      // Use the new server fields!
+      const displayName = p.authorDisplayName || p.author;
+      const displayIcon = p.authorIcon || "user.png";
+
       container.innerHTML += `
         <div class="feed-post">
           <div class="post-header">
-            <img src="user.png">
-            <strong>@${p.author}</strong>
+            <img src="${displayIcon}"> 
+            <strong>@${displayName}</strong>
           </div>
           <div style="padding: 5px 0;">${p.content}</div>
           <button class="star-btn ${starred ? 'active' : ''}" onclick="starPost('${p._id}')">
@@ -292,7 +297,7 @@
           </button>
         </div>`;
     });
-  }
+}
 
   async function submitPost() {
     const content = document.getElementById("postContent").value;
