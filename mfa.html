@@ -132,23 +132,48 @@
     </div>
 
     <script>
-        async function verify() {
-            const code = document.getElementById("mfaCode").value;
-            // Retrieve username saved from the login page
-            const username = localStorage.getItem("pendingUser");
+       async function verify() {
+    const code = document.getElementById("mfaCode").value;
+    const username = localStorage.getItem("pendingUser");
 
-            if (!code || code.length !== 6) {
-                alert("Please enter the full 6-digit code.");
-                return;
-            }
+    if (!code || code.length !== 6) {
+        alert("Please enter the full 6-digit code.");
+        return;
+    }
 
-            try {
-                // Call the new MFA endpoint we built in server.js
-                const res = await fetch("http://192.168.254.128:3000/verify-mfa", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ username, code })
-                });
+    try {
+        const res = await fetch("http://192.168.254.128:3000/verify-mfa", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, code })
+        });
+
+        // 1. Parse the response as JSON (since we changed server.js)
+        const data = await res.json();
+
+        // 2. Check the status field we created in server.js
+        if (data.status === "success") {
+            localStorage.setItem("loggedIn", "true");
+            localStorage.setItem("username", username);
+
+            // Save the profile info if the server sent it back here
+            if (data.displayName) localStorage.setItem("displayName", data.displayName);
+            if (data.profileIcon) localStorage.setItem("pfpUrl", data.profileIcon);
+
+            localStorage.removeItem("pendingUser");
+
+            // 3. Move to the homepage
+            window.location.href = "OurWorlds_homepage.html";
+        } else {
+            // If server sent an error message in the JSON
+            alert(data.message || "Invalid MFA code");
+        }
+    } catch (err) {
+        console.error(err);
+        // If the server didn't send JSON (maybe an error happened), fall back to text
+        alert("Verification failed. Check your console!");
+    }
+}
 
                 const text = await res.text();
 
