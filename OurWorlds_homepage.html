@@ -279,23 +279,23 @@
     const container = document.getElementById("feed-container");
     container.innerHTML = "";
     posts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(p => {
-      const starred = p.stars && p.stars.includes(currentUser);
-      
-      // Use the new server fields!
-      const displayName = p.authorDisplayName || p.author;
-      const displayIcon = p.authorIcon || "user.png";
+        const starred = p.stars && p.stars.includes(currentUser);
+        const displayName = p.authorDisplayName || p.author;
+        const displayIcon = p.authorIcon || "user.png";
 
-      container.innerHTML += `
-        <div class="feed-post">
-          <div class="post-header">
-            <img src="${displayIcon}"> 
-            <strong>@${displayName}</strong>
-          </div>
-          <div style="padding: 5px 0;">${p.content}</div>
-          <button class="star-btn ${starred ? 'active' : ''}" onclick="starPost('${p._id}')">
-            ${starred ? '★' : '☆'} ${p.stars ? p.stars.length : 0}
-          </button>
-        </div>`;
+        container.innerHTML += `
+            <div class="feed-post">
+                <div class="post-header">
+                    <img src="${displayIcon}"> 
+                    <strong>@${displayName}</strong>
+                    <!-- NEW ADD BUTTON -->
+                    <span class="add-btn" onclick="addFriend('${p.author}')" title="Add to Constellations">+</span>
+                </div>
+                <div style="padding: 5px 0;">${p.content}</div>
+                <button class="star-btn ${starred ? 'active' : ''}" onclick="starPost('${p._id}')">
+                    ${starred ? '★' : '☆'} ${p.stars ? p.stars.length : 0}
+                </button>
+            </div>`;
     });
 }
 
