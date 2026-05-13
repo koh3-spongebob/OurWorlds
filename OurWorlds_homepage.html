@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OurWorlds Home ✨</title>
+<title>OurWorlds Home </title>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -78,6 +78,20 @@
     padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; float: right;
   }
 
+.add-friend-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 1.1em;
+    filter: grayscale(1);
+    transition: 0.2s;
+    display: inline-block;
+  }
+  .add-friend-icon:hover {
+    filter: grayscale(0);
+    transform: scale(1.3);
+  }
+
+  
   .feed-post {
     background: white; border-radius: 20px; padding: 20px;
     margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: #444;
@@ -143,9 +157,9 @@
       <div id="display-username">@Guest</div>
     </div>
     <button onclick="openProfile()">Profile</button>
-    <button onclick="alert('Coming soon!')">Friends</button>
+    <button onclick="openFriends()">Friends</button>
     <button onclick="alert('Coming soon!')">Worlds</button>
-    <button onclick="alert('Coming soon!')">Constellations</button>
+   <button onclick="openConstellations()">Constellations</button>
     <button onclick="toggleChat()">Talk to Gurt!</button>
     <button onclick="logout()">Sign Out</button>
   </div>
@@ -197,6 +211,14 @@
   </div>
 </div>
 
+<div id="friendsModal" class="modal">
+  <div class="modal-content">
+    <h2 style="color:#ff2e93;">My Friends 🐾</h2>
+    <div id="friendsListContainer" style="max-height: 200px; overflow-y: auto;"></div>
+    <button onclick="document.getElementById('friendsModal').style.display='none'" style="margin-top:10px;">Close</button>
+  </div>
+</div>
+  
 <script>
   const API_URL = "http://192.168.174.129:3000";
   const currentUser = localStorage.getItem("username") || "Guest";
@@ -275,23 +297,24 @@
     } catch (e) { console.log("Feed offline"); }
   }
 
- function renderPosts(posts) {
+function renderPosts(posts) {
     const container = document.getElementById("feed-container");
     container.innerHTML = "";
     posts.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach(p => {
         const starred = p.stars && p.stars.includes(currentUser);
         const displayName = p.authorDisplayName || p.author;
-        const displayIcon = p.authorIcon || "user.png";
 
         container.innerHTML += `
             <div class="feed-post">
                 <div class="post-header">
-                    <img src="${displayIcon}"> 
+                    <img src="${p.authorIcon || 'user.png'}"> 
                     <strong>@${displayName}</strong>
-                    <!-- NEW ADD BUTTON -->
-                    <span class="add-btn" onclick="addFriend('${p.author}')" title="Add to Constellations">+</span>
+                    <!-- ADD FRIEND BUTTON -->
+                    <span class="add-friend-icon" onclick="addFriend('${p.author}')" title="Add Friend">➕</span>
                 </div>
                 <div style="padding: 5px 0;">${p.content}</div>
+                
+                <!-- STAR BUTTON (FOR CONSTELLATIONS) -->
                 <button class="star-btn ${starred ? 'active' : ''}" onclick="starPost('${p._id}')">
                     ${starred ? '★' : '☆'} ${p.stars ? p.stars.length : 0}
                 </button>
@@ -335,6 +358,37 @@
     createStars();
     loadFeed();
   };
+
+  // --- FRIEND LOGIC ---
+async function addFriend(targetUser) {
+    if (currentUser === targetUser) return alert("You can't add yourself!");
+    
+    const res = await fetch(`${API_URL}/add-friend`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: currentUser, friendName: targetUser })
+    });
+    alert(await res.text());
+}
+
+async function openFriends() {
+    const container = document.getElementById("friendsListContainer");
+    document.getElementById("friendsModal").style.display = "block";
+    container.innerHTML = "Loading friends...";
+
+    const res = await fetch(`${API_URL}/friends-list/${currentUser}`);
+    const friends = await res.json();
+    container.innerHTML = friends.length ? 
+        friends.map(f => `<div style="padding:8px; border-bottom:1px solid #eee;">👤 @${f}</div>`).join('') : 
+        "No friends added yet.";
+}
+
+// --- CONSTELLATION (BOOKMARK) LOGIC ---
+async function openConstellations() {
+    // This will show the posts you have "Starred"
+    alert("Opening your Starred posts (Constellations)...");
+    // You can filter your feed by starred posts here later
+}
 </script>
 </body>
 </html>
