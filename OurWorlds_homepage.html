@@ -285,10 +285,22 @@
   }
 
   async function loadFeed() {
+    // 1. Keep your existing profile logic
     const savedName = localStorage.getItem("displayName");
     const savedPfp = localStorage.getItem("pfpUrl");
     document.getElementById("display-username").textContent = "@" + (savedName || currentUser);
     if(savedPfp) document.getElementById("userPfp").src = savedPfp;
+
+    // 2. Keep your existing feed logic
+    try {
+      const res = await fetch(`${API_URL}/search?q=`);
+      const data = await res.json();
+      renderPosts(data.posts);
+    } catch (e) { console.log("Feed offline"); }
+
+    // 3. NEW: Add the Star Wisdom call here
+    loadStarWisdom(); 
+}
 
     try {
       const res = await fetch(`${API_URL}/search?q=`);
@@ -296,6 +308,30 @@
       renderPosts(data.posts);
     } catch (e) { console.log("Feed offline"); }
   }
+
+  async function loadStarWisdom() {
+    try {
+        const res = await fetch(`https://zenquotes.io/api/random`);
+        const data = await res.json();
+        const quote = data[0].q;
+        const author = data[0].a;
+
+        const affirmationBox = document.getElementById("affirmation-text");
+        
+        // This updates the text AND adds the bookmark button
+        affirmationBox.innerHTML = `
+            "${quote}" <br> 
+            <small style="opacity: 0.8;">— ${author}</small>
+            <div style="margin-top:10px;">
+                <button onclick="saveQuoteToConstellations('${quote.replace(/'/g, "\\'")}', '${author}')" 
+                        style="background:none; border:none; cursor:pointer; font-size:1.2em;" 
+                        title="Save to Constellations">✨</button>
+            </div>
+        `;
+    } catch (e) {
+        document.getElementById("affirmation-text").textContent = "The stars are quiet tonight...";
+    }
+}
 
 function renderPosts(posts) {
     const container = document.getElementById("feed-container");
@@ -385,9 +421,35 @@ async function openFriends() {
 
 // --- CONSTELLATION (BOOKMARK) LOGIC ---
 async function openConstellations() {
-    // This will show the posts you have "Starred"
-    alert("Opening your Starred posts (Constellations)...");
-    // You can filter your feed by starred posts here later
+    try {
+        // 1. Fetch all posts from your backend
+        const res = await fetch(`${API_URL}/search?q=`);
+        const data = await res.json();
+        
+        // 2. Filter for items that belong in your "Constellation"
+        // We look for:
+        // - Posts where your username is in the "stars" array
+        // - Posts that are specifically "Saved Wisdom" quotes you created
+        const myConstellation = data.posts.filter(p => {
+            const isStarred = p.stars && p.stars.includes(currentUser);
+            const isSavedQuote = p.content.includes("Saved Wisdom:");
+            return isStarred || isSavedQuote;
+        });
+
+        // 3. Show a message if it's empty, otherwise render them!
+        if (myConstellation.length === 0) {
+            alert("Your constellation is empty! Star a post or save a quote to see it here.");
+        } else {
+            // This re-uses your existing renderPosts function to display the filtered list
+            renderPosts(myConstellation);
+            
+            // Optional: Scroll to top so the user sees the results
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    } catch (e) {
+        console.error("Error loading constellations:", e);
+        alert("Could not connect to the galaxy to retrieve your constellations.");
+    }
 }
 </script>
 </body>
