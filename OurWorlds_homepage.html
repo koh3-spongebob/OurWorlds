@@ -15,7 +15,7 @@
     overflow-x: hidden;
   }
 
-  /* ===== BACKGROUND ANIMATIONS ===== */
+  /* ===== FALLING STARS BACKGROUND ===== */
   .feed-stars {
     position: absolute; width: 100%; height: 100%;
     pointer-events: none; z-index: 0;
@@ -33,7 +33,7 @@
   /* ===== PAGE LAYOUT ===== */
   .container { display: flex; flex: 1; gap: 20px; padding: 20px; z-index: 1; }
 
-  /* ===== LEFT SIDEBAR ===== */
+  /* ===== LEFT SIDEBAR (Cute Buttons Restored) ===== */
   .left-panel {
     width: 220px; background: #ff2e93; border-radius: 25px;
     border: 3px solid white; box-shadow: 0 0 25px rgba(255,255,255,0.7);
@@ -52,13 +52,16 @@
   .user-profile { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; color: white; }
   .user-profile img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; background: white; }
 
+  /* CUTE BUTTONS STYLE */
   .left-panel button {
-    width: 100%; margin: 10px 0; padding: 12px; border: none; border-radius: 30px;
+    width: 100%; margin: 8px 0; padding: 12px; border: none; border-radius: 25px;
     font-weight: bold; color: white; background: linear-gradient(to bottom, #ff8acc, #ff2e93);
-    cursor: pointer; box-shadow: 0 5px #d40070, 0 -2px 6px rgba(255,255,255,0.3) inset;
-    transition: 0.2s; position: relative; z-index: 2; font-family: 'Quicksand', sans-serif;
+    cursor: pointer; box-shadow: 0 6px #d40070, 0 -2px 6px rgba(255,255,255,0.4) inset;
+    transition: 0.2s; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .left-panel button:hover { transform: translateY(-2px); box-shadow: 0 7px #d40070, 0 -2px 8px rgba(255,255,255,0.4) inset; }
+  .left-panel button:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px #d40070, 0 -2px 8px rgba(255,255,255,0.5) inset; }
+  .left-panel button::before { content: "☆"; }
+  .left-panel button:hover::before { content: "★"; }
 
   /* ===== MAIN FEED AREA ===== */
   .main-feed { flex: 1; display: flex; flex-direction: column; align-items: center; max-width: 600px; margin: 0 auto; }
@@ -92,7 +95,8 @@
   .right-space { width: 250px; position: relative; }
   #gurt {
     position: fixed; bottom: 30px; right: 40px; width: 140px;
-    z-index: 5; opacity: 0.8; animation: spinGurt 12s linear infinite;
+    z-index: 5; opacity: 0.8; transform-origin: center;
+    animation: spinGurt 12s linear infinite;
   }
   @keyframes spinGurt { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -126,10 +130,11 @@
       <img src="user.png" id="userPfp">
       <div id="display-username">@Guest</div>
     </div>
-    <button onclick="alert('Profile Coming Soon!')">Profile</button>
-    <button onclick="alert('Friends Coming Soon!')">Friends</button>
+    <button onclick="alert('Profile!')">Profile</button>
+    <button onclick="alert('Friends!')">Friends</button>
     <button onclick="alert('Worlds!')">Worlds</button>
-    <button onclick="alert('Bookmarks!')">Bookmarks</button>
+    <button onclick="alert('Bookmarks!')">Constellations</button>
+    <button onclick="fetchStarWisdom()">Talk to Gurt!</button>
     <button onclick="logout()">Sign Out</button>
   </div>
 
@@ -147,7 +152,7 @@
   <div class="right-space">
     <div class="speech-bubble">
       <strong style="display:block; margin-bottom: 5px;">✨ Star Wisdom:</strong>
-      <p id="affirmation-text">Receiving a signal from the stars...</p>
+      <p id="affirmation-text">Receiving a signal...</p>
     </div>
     <img src="gurtHOMEPAGE.png" id="gurt">
   </div>
@@ -158,16 +163,17 @@
   const currentUser = localStorage.getItem("username") || "Guest";
   document.getElementById("display-username").textContent = "@" + currentUser;
 
-  // --- GENUINE EXTERNAL API CALL ---
+  // --- NEW HIGH-FREQUENCY API (Changes every refresh) ---
   async function fetchStarWisdom() {
     const textElement = document.getElementById("affirmation-text");
     try {
-      // Calling the Advice Slip API (Free, Public, No Key)
-      const response = await fetch('https://api.adviceslip.com/advice');
+      // Using a random quote API that changes instantly on refresh
+      const response = await fetch('https://api.quotable.io/random?tags=inspirational');
       const data = await response.json();
-      textElement.textContent = `"${data.slip.advice}"`;
+      textElement.textContent = `"${data.content}"`;
     } catch (error) {
-      textElement.textContent = "The stars are quiet tonight, but you are still amazing! ✨";
+      // Fallback if the external API is rate-limited
+      textElement.textContent = "The stars say: You're doing great! ✨";
     }
   }
 
@@ -197,27 +203,14 @@
             <div>${p.content}</div>
           </div>`;
       });
-    } catch (e) { container.innerHTML = "<p style='color:white;'>Backend check failed.</p>"; }
-  }
-
-  async function handleSearch(event) {
-    if (event.key === "Enter") {
-      const q = document.getElementById("searchInput").value;
-      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      const container = document.getElementById("feed-container");
-      container.innerHTML = `<h3 style="color:white;">Results for "${q}"</h3>`;
-      data.posts.forEach(p => {
-        container.innerHTML += `<div class="feed-post"><strong>@${p.author}</strong>: ${p.content}</div>`;
-      });
-    }
+    } catch (e) { console.log("Feed load failed"); }
   }
 
   function logout() { localStorage.clear(); window.location.href ="index.html"; }
 
   window.onload = () => {
     loadFeed();
-    fetchStarWisdom(); // Hits the external API on every refresh
+    fetchStarWisdom();
   };
 </script>
 </body>
