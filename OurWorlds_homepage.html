@@ -301,14 +301,6 @@
     // 3. NEW: Add the Star Wisdom call here
     loadStarWisdom(); 
 }
-
-    try {
-      const res = await fetch(`${API_URL}/search?q=`);
-      const data = await res.json();
-      renderPosts(data.posts);
-    } catch (e) { console.log("Feed offline"); }
-  }
-
   async function loadStarWisdom() {
     try {
         const res = await fetch(`https://zenquotes.io/api/random`);
