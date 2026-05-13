@@ -33,7 +33,7 @@
   /* ===== PAGE LAYOUT ===== */
   .container { display: flex; flex: 1; gap: 20px; padding: 20px; z-index: 1; }
 
-  /* ===== LEFT SIDEBAR (Cute Buttons Restored) ===== */
+  /* ===== LEFT SIDEBAR (Cute Buttons) ===== */
   .left-panel {
     width: 220px; background: #ff2e93; border-radius: 25px;
     border: 3px solid white; box-shadow: 0 0 25px rgba(255,255,255,0.7);
@@ -50,9 +50,8 @@
 
   .logo { width: 100%; margin-bottom: 15px; position: relative; z-index: 2; }
   .user-profile { text-align: center; margin-bottom: 20px; position: relative; z-index: 2; color: white; }
-  .user-profile img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; background: white; }
+  .user-profile img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; background: white; object-fit: cover; }
 
-  /* CUTE BUTTONS STYLE */
   .left-panel button {
     width: 100%; margin: 8px 0; padding: 12px; border: none; border-radius: 25px;
     font-weight: bold; color: white; background: linear-gradient(to bottom, #ff8acc, #ff2e93);
@@ -88,15 +87,14 @@
     margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: #444; box-sizing: border-box;
   }
   .post-header { display: flex; align-items: center; margin-bottom: 12px; }
-  .post-header img { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; border: 2px solid #ff2e93; }
+  .post-header img { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; border: 2px solid #ff2e93; object-fit: cover; }
   .post-header strong { color: #ff2e93; }
 
-  /* ===== RIGHT SIDE (GURT & LIVE API WISDOM) ===== */
+  /* ===== RIGHT SIDE (GURT & LIVE API) ===== */
   .right-space { width: 250px; position: relative; }
   #gurt {
     position: fixed; bottom: 30px; right: 40px; width: 140px;
-    z-index: 5; opacity: 0.8; transform-origin: center;
-    animation: spinGurt 12s linear infinite;
+    z-index: 5; opacity: 0.8; animation: spinGurt 12s linear infinite;
   }
   @keyframes spinGurt { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -109,6 +107,25 @@
   .speech-bubble::after {
     content: ''; position: absolute; bottom: -12px; right: 50px;
     border-width: 12px 12px 0; border-style: solid; border-color: #ff2e93 transparent;
+  }
+
+  /* ===== SETTINGS MODAL STYLE ===== */
+  .modal {
+    display: none; position: fixed; z-index: 100; left: 0; top: 0;
+    width: 100%; height: 100%; background-color: rgba(0,0,0,0.4);
+  }
+  .modal-content {
+    background-color: white; margin: 15% auto; padding: 30px;
+    border: 3px solid #ff2e93; width: 300px; border-radius: 25px;
+    text-align: center; box-shadow: 0 0 30px rgba(255,255,255,0.5);
+  }
+  .modal-content input {
+    width: 90%; padding: 10px; margin: 10px 0; border-radius: 10px;
+    border: 2px solid #ffcae5; outline: none;
+  }
+  .modal-content button {
+    margin-top: 10px; padding: 10px 20px; border-radius: 15px; border: none;
+    background: #ff2e93; color: white; font-weight: bold; cursor: pointer;
   }
 </style>
 </head>
@@ -130,10 +147,10 @@
       <img src="user.png" id="userPfp">
       <div id="display-username">@Guest</div>
     </div>
-    <button onclick="alert('Profile!')">Profile</button>
-    <button onclick="alert('Friends!')">Friends</button>
-    <button onclick="alert('Worlds!')">Worlds</button>
-    <button onclick="alert('Bookmarks!')">Constellations</button>
+    <button onclick="openProfile()">Profile</button>
+    <button onclick="alert('Friends Feature!')">Friends</button>
+    <button onclick="alert('Exploring Worlds!')">Worlds</button>
+    <button onclick="alert('Constellations!')">Bookmarks</button>
     <button onclick="fetchStarWisdom()">Talk to Gurt!</button>
     <button onclick="logout()">Sign Out</button>
   </div>
@@ -158,25 +175,67 @@
   </div>
 </div>
 
+<!-- PROFILE SETTINGS MODAL -->
+<div id="profileModal" class="modal">
+  <div class="modal-content">
+    <h2 style="color:#ff2e93;">Edit Profile ✨</h2>
+    <input type="text" id="newDisplayName" placeholder="New Display Name">
+    <input type="text" id="newPfpUrl" placeholder="Image URL (e.g. imgur.com/...)">
+    <button onclick="saveProfile()">Save Changes</button>
+    <button onclick="closeProfile()" style="background:#ccc; margin-left:5px;">Cancel</button>
+  </div>
+</div>
+
 <script>
   const API_URL = "http://192.168.254.129:3000";
   const currentUser = localStorage.getItem("username") || "Guest";
-  document.getElementById("display-username").textContent = "@" + currentUser;
 
-  // --- NEW HIGH-FREQUENCY API (Changes every refresh) ---
+  // --- PROFILE LOGIC ---
+  function openProfile() {
+    document.getElementById("profileModal").style.display = "block";
+  }
+
+  function closeProfile() {
+    document.getElementById("profileModal").style.display = "none";
+  }
+
+  async function saveProfile() {
+    const newName = document.getElementById("newDisplayName").value;
+    const newPic = document.getElementById("newPfpUrl").value;
+
+    try {
+      const res = await fetch(`${API_URL}/update-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          username: currentUser, 
+          displayName: newName, 
+          pfpUrl: newPic 
+        })
+      });
+
+      if(res.ok) {
+        if(newName) localStorage.setItem("displayName", newName);
+        if(newPic) localStorage.setItem("pfpUrl", newPic);
+        alert("Profile Updated! 🌟");
+        location.reload();
+      }
+    } catch (e) { alert("Error connecting to server."); }
+  }
+
+  // --- EXTERNAL API ---
   async function fetchStarWisdom() {
     const textElement = document.getElementById("affirmation-text");
     try {
-      // Using a random quote API that changes instantly on refresh
       const response = await fetch('https://api.quotable.io/random?tags=inspirational');
       const data = await response.json();
       textElement.textContent = `"${data.content}"`;
     } catch (error) {
-      // Fallback if the external API is rate-limited
       textElement.textContent = "The stars say: You're doing great! ✨";
     }
   }
 
+  // --- POSTING LOGIC ---
   async function submitPost() {
     const content = document.getElementById("postContent").value;
     if(!content) return;
@@ -190,12 +249,20 @@
     } catch (e) { alert("Backend offline!"); }
   }
 
+  // --- FEED LOAD ---
   async function loadFeed() {
     try {
       const res = await fetch(`${API_URL}/search?q=`);
       const data = await res.json();
       const container = document.getElementById("feed-container");
       container.innerHTML = "";
+      
+      // Load user display data
+      const savedName = localStorage.getItem("displayName") || currentUser;
+      const savedPfp = localStorage.getItem("pfpUrl") || "user.png";
+      document.getElementById("display-username").textContent = "@" + savedName;
+      document.getElementById("userPfp").src = savedPfp;
+
       data.posts.reverse().forEach(p => {
         container.innerHTML += `
           <div class="feed-post">
@@ -203,7 +270,7 @@
             <div>${p.content}</div>
           </div>`;
       });
-    } catch (e) { console.log("Feed load failed"); }
+    } catch (e) { console.log("Feed failed"); }
   }
 
   function logout() { localStorage.clear(); window.location.href ="index.html"; }
