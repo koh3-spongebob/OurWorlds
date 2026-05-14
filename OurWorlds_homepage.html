@@ -241,6 +241,24 @@
     <button onclick="document.getElementById('worldsModal').style.display='none'" style="margin-top:10px;">Close</button>
   </div>
 </div>
+
+
+  <!-- DM Chat Window -->
+<div id="dm-window" style="position: fixed; bottom: 20px; right: 360px; width: 300px; height: 400px; background: white; border: 4px solid #ff2e93; border-radius: 25px; display: none; flex-direction: column; z-index: 1010; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+  <div class="chat-header" style="background: #ff2e93; color: white; padding: 10px; border-top-left-radius: 15px; border-top-right-radius: 15px; display: flex; justify-content: space-between;">
+    <span id="dm-target-name">Chatting with...</span>
+    <span style="cursor:pointer;" onclick="closeDM()">×</span>
+  </div>
+  <div id="dm-history" style="flex: 1; padding: 10px; overflow-y: auto; background: #fffafc; display: flex; flex-direction: column; gap: 8px;">
+    <!-- Messages appear here -->
+  </div>
+  <div class="chat-input-area" style="padding: 10px; display: flex; gap: 5px;">
+    <input type="text" id="dmInput" placeholder="Send a message..." style="flex:1; border-radius: 15px; border: 1px solid #ffcae5; padding: 5px 10px;">
+    <button onclick="sendDM()" style="background: #ff2e93; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">➔</button>
+  </div>
+</div>
+
+  
   
 <script>
   const API_URL = "http://192.168.174.129:3000";
@@ -521,9 +539,68 @@ async function openFriends() {
 
     const res = await fetch(`${API_URL}/friends-list/${currentUser}`);
     const friends = await res.json();
+    
     container.innerHTML = friends.length ? 
-        friends.map(f => `<div style="padding:8px; border-bottom:1px solid #eee;">👤 @${f}</div>`).join('') : 
+        friends.map(f => `
+            <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                <span>👤 @${f}</span>
+                <button onclick="openDM('${f}')" style="background:#ff2e93; color:white; border:none; border-radius:15px; cursor:pointer; padding:5px 12px; font-size:0.8em;">Message</button>
+            </div>`).join('') : 
         "No friends added yet.";
+}
+
+  let currentChatPartner = "";
+
+function openDM(friendName) {
+    currentChatPartner = friendName;
+    document.getElementById("dm-target-name").textContent = "✨ Chat: " + friendName;
+    document.getElementById("dm-window").style.display = "flex";
+    document.getElementById("friendsModal").style.display = "none"; // Close the friends list to clean up the screen
+    loadDMs();
+}
+
+function closeDM() {
+    document.getElementById("dm-window").style.display = "none";
+    currentChatPartner = "";
+}
+
+async function sendDM() {
+    const input = document.getElementById("dmInput");
+    const msg = input.value.trim();
+    if (!msg || !currentChatPartner) return;
+
+    // We send this to a new endpoint: /send-dm
+    await fetch(`${API_URL}/send-dm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            sender: currentUser,
+            recipient: currentChatPartner,
+            content: msg
+        })
+    });
+
+    input.value = "";
+    loadDMs(); // Refresh the chat window
+}
+
+async function loadDMs() {
+    if (!currentChatPartner) return;
+    const res = await fetch(`${API_URL}/get-dms/${currentUser}/${currentChatPartner}`);
+    const messages = await res.json();
+    
+    const history = document.getElementById("dm-history");
+    history.innerHTML = messages.map(m => {
+        const isMe = m.sender === currentUser;
+        return `
+            <div style="align-self: ${isMe ? 'flex-end' : 'flex-start'}; 
+                        background: ${isMe ? '#ffcae5' : '#eee'}; 
+                        padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 13px;">
+                ${m.content}
+            </div>
+        `;
+    }).join('');
+    history.scrollTop = history.scrollHeight;
 }
 
 // --- CONSTELLATION (BOOKMARK) LOGIC ---
