@@ -362,14 +362,22 @@ function renderPosts(posts) {
     loadFeed();
   }
 
-  async function starPost(postId) {
-    await fetch(`${API_URL}/star-post`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: currentUser, postId })
-    });
-    loadFeed();
-  }
+ async function starPost(postId) {
+    try {
+        const res = await fetch(`${API_URL}/star-post`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: currentUser, postId })
+        });
+
+        if (res.ok) {
+            // Refresh the feed to show the updated star count and icon state
+            loadFeed();
+        }
+    } catch (e) {
+        console.error("Error toggling star:", e);
+    }
+}
 
   async function handleSearch(e) {
     if(e.key === "Enter") {
