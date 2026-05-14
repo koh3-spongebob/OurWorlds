@@ -353,14 +353,23 @@ function renderPosts(posts) {
   async function submitPost() {
     const content = document.getElementById("postContent").value;
     if(!content) return;
+
+    // regex to find hashtags: looks for # followed by alphanumeric characters
+    const hashtags = content.match(/#[a-z0-9_]+/gi) || [];
+
     await fetch(`${API_URL}/post`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: currentUser, content })
+      body: JSON.stringify({ 
+        username: currentUser, 
+        content,
+        tags: hashtags // Send the tags to the backend
+      })
     });
+    
     document.getElementById("postContent").value = "";
     loadFeed();
-  }
+}
 
  async function starPost(postId) {
     try {
