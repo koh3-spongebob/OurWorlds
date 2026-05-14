@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OurWorlds Home </title>
+  <script>
+    // Check if the user is logged in
+    const sessionUser = localStorage.getItem("username");
+    
+    // If no user is found, redirect to login immediately
+    if (!sessionUser) {
+        window.location.href = "index.html"; 
+    }
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
