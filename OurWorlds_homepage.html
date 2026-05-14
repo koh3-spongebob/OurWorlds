@@ -326,20 +326,23 @@
   }
 
   async function loadFeed() {
-    // 1. Keep your existing profile logic
+    // This ensures the page always knows who YOU are from your browser's storage
     const savedName = localStorage.getItem("displayName");
     const savedPfp = localStorage.getItem("pfpUrl");
+    
+    // Update the sidebar with your specific info
     document.getElementById("display-username").textContent = "@" + (savedName || currentUser);
     if(savedPfp) document.getElementById("userPfp").src = savedPfp;
 
-    // 2. Keep your existing feed logic
     try {
-      const res = await fetch(`${API_URL}/search?q=`);
+      // Pass the currentUser to the search so the backend knows who is asking
+      const res = await fetch(`${API_URL}/search?q=&viewer=${currentUser}`);
       const data = await res.json();
       renderPosts(data.posts);
-    } catch (e) { console.log("Feed offline"); }
+    } catch (e) { 
+      console.log("Feed offline"); 
+    }
 
-    // 3. NEW: Add the Star Wisdom call here
     loadStarWisdom(); 
 }
   async function loadStarWisdom() {
