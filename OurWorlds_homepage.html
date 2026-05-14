@@ -355,17 +355,24 @@ function renderPosts(posts) {
         const starred = p.stars && p.stars.includes(currentUser);
         const displayName = p.authorDisplayName || p.author;
 
+        // This checks if the post was made by "Guest" while you are logged in as "Guest"
+        const isOwner = p.author === currentUser;
+
         container.innerHTML += `
-            <div class="feed-post">
+            <div class="feed-post" style="position: relative;">
                 <div class="post-header">
                     <img src="${p.authorIcon || 'user.png'}"> 
                     <strong>@${displayName}</strong>
-                    <!-- ADD FRIEND BUTTON -->
                     <span class="add-friend-icon" onclick="addFriend('${p.author}')" title="Add Friend">➕</span>
+                    
+                    <!-- The Delete Button -->
+                    ${isOwner ? `<span onclick="deletePost('${p._id}')" 
+                          style="margin-left: auto; cursor: pointer; color: #ffcae5; font-weight: bold; font-size: 1.2em;" 
+                          onmouseover="this.style.color='#ff2e93'" 
+                          onmouseout="this.style.color='#ffcae5'">×</span>` : ''}
                 </div>
                 <div style="padding: 5px 0;">${p.content}</div>
                 
-                <!-- STAR BUTTON (FOR CONSTELLATIONS) -->
                 <button class="star-btn ${starred ? 'active' : ''}" onclick="starPost('${p._id}')">
                     ${starred ? '★' : '☆'} ${p.stars ? p.stars.length : 0}
                 </button>
@@ -474,6 +481,27 @@ async function enterWorld(tag) {
     loadFeed();
   };
 
+async function deletePost(postId) {
+    if (!confirm("Remove this test post from the galaxy?")) return;
+
+    try {
+        const res = await fetch(`${API_URL}/delete-post/${postId}`, {
+            method: "DELETE"
+        });
+
+        if (res.ok) {
+            // Reload the feed so the post disappears immediately
+            loadFeed();
+        } else {
+            alert("The server couldn't delete this post.");
+        }
+    } catch (e) {
+        console.error("Delete error:", e);
+        alert("Check if your backend server is running!");
+    }
+}
+
+  
   // --- FRIEND LOGIC ---
 async function addFriend(targetUser) {
     if (currentUser === targetUser) return alert("You can't add yourself!");
