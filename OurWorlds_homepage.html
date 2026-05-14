@@ -270,6 +270,21 @@
   
   
 <script>
+// Create a unique ID for this specific tab
+const tabID = sessionStorage.getItem("tabID") || Math.random().toString();
+sessionStorage.setItem("tabID", tabID);
+
+// Store this ID in localStorage to "claim" the session
+localStorage.setItem("activeTab", tabID);
+
+// Listen for other tabs changing the "active" status
+window.addEventListener('storage', (e) => {
+    if (e.key === "activeTab" && e.newValue !== tabID) {
+        alert("OurWorlds is already open in another tab! Closing this one to save stardust.");
+        window.location.href = "about:blank"; // Or redirect to a "Duplicate Tab" error page
+    }
+});
+  
   const API_URL = "http://192.168.174.129:3000";
   const currentUser = localStorage.getItem("username") || "Guest";
 
@@ -504,7 +519,11 @@ async function enterWorld(tag) {
     }
   }
 
-  function logout() { localStorage.clear(); window.location.href = "index.html"; }
+  function logout() {
+    localStorage.clear(); // This wipes the username and PFP
+    sessionStorage.clear(); // This wipes the temporary session
+    window.location.href = "index.html";
+}
 
   window.onload = () => {
     createStars();
