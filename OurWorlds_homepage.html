@@ -384,30 +384,16 @@ window.addEventListener('storage', (e) => {
 
     loadStarWisdom(); 
 }
-  async function loadStarWisdom() {
+ async function loadStarWisdom() {
     try {
-        const res = await fetch(`https://zenquotes.io/api/random`);
+        // Now calling your OWN backend instead of the external API
+        const res = await fetch(`http://192.168.174.129:3000/api/wisdom`);
         const data = await res.json();
-        const quote = data[0].q;
-        const author = data[0].a;
-
-        const affirmationBox = document.getElementById("affirmation-text");
-        
-        // This updates the text AND adds the bookmark button
-        affirmationBox.innerHTML = `
-            "${quote}" <br> 
-            <small style="opacity: 0.8;">— ${author}</small>
-            <div style="margin-top:10px;">
-                <button onclick="saveQuoteToConstellations('${quote.replace(/'/g, "\\'")}', '${author}')" 
-                        style="background:none; border:none; cursor:pointer; font-size:1.2em;" 
-                        title="Save to Constellations">✨</button>
-            </div>
-        `;
+        // ... rest of your code to display the quote
     } catch (e) {
         document.getElementById("affirmation-text").textContent = "The stars are quiet tonight...";
     }
 }
-
 function renderPosts(posts) {
     const container = document.getElementById("feed-container");
     container.innerHTML = "";
