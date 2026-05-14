@@ -270,18 +270,33 @@
   
   
 <script>
-// Create a unique ID for this specific tab
+// 1. Identify this specific tab
 const tabID = sessionStorage.getItem("tabID") || Math.random().toString();
 sessionStorage.setItem("tabID", tabID);
 
-// Store this ID in localStorage to "claim" the session
-localStorage.setItem("activeTab", tabID);
+// 2. Check if another tab is already the "Boss"
+const currentActiveTab = localStorage.getItem("activeTab");
 
-// Listen for other tabs changing the "active" status
+if (currentActiveTab && currentActiveTab !== tabID) {
+    // If someone else is already logged in elsewhere, don't let this tab in!
+    alert("OurWorlds is already open in another window. Please use the active tab!");
+    window.location.href = "index.html"; 
+} else {
+    // If no one is active, this tab becomes the Boss
+    localStorage.setItem("activeTab", tabID);
+}
+
+// 3. Cleanup: If the user closes the tab, tell the system the "Boss" seat is empty
+window.onbeforeunload = function() {
+    if (localStorage.getItem("activeTab") === tabID) {
+        localStorage.removeItem("activeTab");
+    }
+};
+
+// 4. Listen for changes (Optional: keep this if you want to prevent swapping)
 window.addEventListener('storage', (e) => {
-    if (e.key === "activeTab" && e.newValue !== tabID) {
-        alert("OurWorlds is already open in another tab! Closing this one to save stardust.");
-        window.location.href = "about:blank"; // Or redirect to a "Duplicate Tab" error page
+    if (e.key === "activeTab" && e.newValue && e.newValue !== tabID) {
+        window.location.href = "index.html";
     }
 });
   
