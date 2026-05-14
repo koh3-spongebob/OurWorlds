@@ -78,6 +78,18 @@
     padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; float: right;
   }
 
+/* This makes hashtags in posts stand out */
+  .hashtag-link {
+    color: #ff2e93;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .hashtag-link:hover {
+    text-decoration: underline;
+  }
+
+  
 .add-friend-icon {
     cursor: pointer;
     margin-left: 10px;
@@ -158,7 +170,7 @@
     </div>
     <button onclick="openProfile()">Profile</button>
     <button onclick="openFriends()">Friends</button>
-    <button onclick="alert('Coming soon!')">Worlds</button>
+    <button onclick="openWorlds()">Worlds</button>
    <button onclick="openConstellations()">Constellations</button>
     <button onclick="toggleChat()">Talk to Gurt!</button>
     <button onclick="logout()">Sign Out</button>
@@ -216,6 +228,17 @@
     <h2 style="color:#ff2e93;">My Friends 🐾</h2>
     <div id="friendsListContainer" style="max-height: 200px; overflow-y: auto;"></div>
     <button onclick="document.getElementById('friendsModal').style.display='none'" style="margin-top:10px;">Close</button>
+  </div>
+</div>
+
+<div id="worldsModal" class="modal">
+  <div class="modal-content">
+    <h2 style="color:#ff2e93;">Explore Worlds 🪐</h2>
+    <p style="font-size: 0.9em; color: #666;">Click a world to enter it</p>
+    <div id="worldsListContainer" style="max-height: 250px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding: 10px;">
+      <!-- Hashtags will appear here -->
+    </div>
+    <button onclick="document.getElementById('worldsModal').style.display='none'" style="margin-top:10px;">Close</button>
   </div>
 </div>
   
@@ -348,6 +371,53 @@ function renderPosts(posts) {
                 </button>
             </div>`;
     });
+}
+
+  async function openWorlds() {
+    document.getElementById("worldsModal").style.display = "block";
+    const container = document.getElementById("worldsListContainer");
+    container.innerHTML = "Scanning the stars...";
+
+    try {
+        const res = await fetch(`${API_URL}/search?q=`);
+        const data = await res.json();
+        
+        // Collect all hashtags from every post
+        let allTags = [];
+        data.posts.forEach(p => {
+            const tags = p.content.match(/#[a-z0-9_]+/gi);
+            if(tags) allTags.push(...tags);
+        });
+
+        // Remove duplicates and sort
+        const uniqueTags = [...new Set(allTags)].sort();
+
+        if (uniqueTags.length === 0) {
+            container.innerHTML = "No worlds discovered yet. Create one with a #hashtag!";
+        } else {
+            container.innerHTML = uniqueTags.map(tag => `
+                <span onclick="enterWorld('${tag}')" 
+                      style="background: #ffcae5; color: #ff2e93; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.2s;"
+                      onmouseover="this.style.background='#ff2e93'; this.style.color='white'"
+                      onmouseout="this.style.background='#ffcae5'; this.style.color='#ff2e93'">
+                    ${tag}
+                </span>
+            `).join('');
+        }
+    } catch (e) {
+        container.innerHTML = "Error reaching the Worlds.";
+    }
+}
+
+async function enterWorld(tag) {
+    document.getElementById("worldsModal").style.display = "none";
+    // Reuse your search logic to filter the feed by the hashtag
+    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(tag)}`);
+    const data = await res.json();
+    renderPosts(data.posts);
+    
+    // Optional: add a little alert to show which world you're in
+    console.log("Welcome to World: " + tag);
 }
 
   async function submitPost() {
